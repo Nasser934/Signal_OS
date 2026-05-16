@@ -11,6 +11,12 @@ export default function PublishPage() {
   const [post, setPost] = useState<PublishedPost | null>(null);
 
   async function onPublish() {
+    try {
+      new URL(postUrl);
+    } catch {
+      setMsg('Post URL must be a valid URL');
+      return;
+    }
     const mode = (window.localStorage.getItem(STORE_KEYS.mode) as PublishedPost['sourceMode'] | null) ?? 'manual';
     const res = await fetch('/api/publish', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ draftText, postUrl, sourceMode: mode }) });
     const body = (await res.json()) as { post?: PublishedPost; error?: string };
@@ -28,10 +34,10 @@ export default function PublishPage() {
     <>
       <h1>Publish Tracking</h1>
       <section className="card">
-        <label>Final text</label>
-        <textarea rows={4} value={draftText} onChange={(e) => setDraftText(e.target.value)} />
-        <label>Post URL</label>
-        <input value={postUrl} onChange={(e) => setPostUrl(e.target.value)} />
+        <label htmlFor="publish-text">Final text</label>
+        <textarea id="publish-text" rows={4} value={draftText} onChange={(e) => setDraftText(e.target.value)} />
+        <label htmlFor="publish-url">Post URL</label>
+        <input id="publish-url" value={postUrl} onChange={(e) => setPostUrl(e.target.value)} />
         <button onClick={onPublish}>Mark published</button>
         {msg ? <p>{msg}</p> : null}
         {post ? <p><Link href={`/command-center/${post.id}`}>Open command center</Link></p> : null}

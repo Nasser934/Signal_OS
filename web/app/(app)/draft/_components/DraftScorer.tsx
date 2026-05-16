@@ -5,15 +5,7 @@ import { useEffect, useMemo, useState } from 'react';
 import type { ScoreOutput } from '@/lib/scoringClient';
 import { STORE_KEYS, readJson, writeJson } from '@/lib/store/localStore';
 
-interface StoredDraftRun {
-  id: string;
-  createdAt: string;
-  text: string;
-  topic?: string;
-  audience?: string;
-  tone?: string;
-  score: ScoreOutput;
-}
+import type { StoredDraftRun } from '@/types/scoring';
 
 const STORAGE_KEY = 'signalos:draft';
 const RUNS_KEY = STORE_KEYS.draftRuns;
@@ -90,11 +82,11 @@ export function DraftScorer() {
   return (
     <>
       <section className="card">
-        <label>Draft text</label>
-        <textarea rows={6} value={text} onChange={(e) => setText(e.target.value)} />
-        <label>Topic</label><input value={topic} onChange={(e) => setTopic(e.target.value)} />
-        <label>Audience</label><input value={audience} onChange={(e) => setAudience(e.target.value)} />
-        <label>Tone</label><input value={tone} onChange={(e) => setTone(e.target.value)} />
+        <label htmlFor="draft-text">Draft text</label>
+        <textarea id="draft-text" rows={6} value={text} onChange={(e) => setText(e.target.value)} />
+        <label htmlFor="draft-topic">Topic</label><input id="draft-topic" value={topic} onChange={(e) => setTopic(e.target.value)} />
+        <label htmlFor="draft-audience">Audience</label><input id="draft-audience" value={audience} onChange={(e) => setAudience(e.target.value)} />
+        <label htmlFor="draft-tone">Tone</label><input id="draft-tone" value={tone} onChange={(e) => setTone(e.target.value)} />
         <button onClick={onScore} disabled={!canScore}>{loading ? 'Scoring…' : 'Score draft'}</button>
       </section>
       {error ? <section className="card">Error: {error}</section> : null}
@@ -106,7 +98,7 @@ export function DraftScorer() {
           <h3>Components</h3>
           <ul>{result.components.map((c) => <li key={c.name}>{c.name}: {c.score} — {c.rationale}</li>)}</ul>
           <h3>Rewrites</h3>
-          <ul>{result.rewriteRecommendations.map((r, i) => <li key={i}>{r}</li>)}</ul>
+          <ul>{result.rewriteRecommendations.map((r) => <li key={r}>{r}</li>)}</ul>
           {runId ? <p><Link href={`/scorecard/${runId}`}>Open shareable scorecard</Link></p> : null}
         </section>
       ) : null}

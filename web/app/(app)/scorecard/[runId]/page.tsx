@@ -3,24 +3,7 @@
 import { useParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { STORE_KEYS, readJson } from '@/lib/store/localStore';
-
-type StoredDraftRun = {
-  id: string;
-  createdAt: string;
-  text: string;
-  topic?: string;
-  audience?: string;
-  tone?: string;
-  score: {
-    totalScore: number;
-    explanation: string;
-    biggestWeakness: string;
-    topStrength: string;
-    components: { name: string; score: number; rationale: string }[];
-    rewriteRecommendations: string[];
-    rulesVersion: string;
-  };
-};
+import type { StoredDraftRun } from '@/types/scoring';
 
 export default function ScorecardPage() {
   const params = useParams<{ runId: string }>();
@@ -31,9 +14,7 @@ export default function ScorecardPage() {
     setItem(list.find((entry) => entry.id === params.runId) ?? null);
   }, [params.runId]);
 
-  if (!item) {
-    return <main><h1>Scorecard not found</h1><p>Run this draft again to generate a new shareable scorecard.</p></main>;
-  }
+  if (!item) return <main><h1>Scorecard not found</h1></main>;
 
   return (
     <main>
@@ -42,7 +23,6 @@ export default function ScorecardPage() {
       <p>{item.score.explanation}</p>
       <p><strong>Top strength:</strong> {item.score.topStrength}</p>
       <p><strong>Biggest weakness:</strong> {item.score.biggestWeakness}</p>
-      <h3>Draft</h3>
       <pre>{item.text}</pre>
     </main>
   );

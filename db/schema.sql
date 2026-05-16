@@ -35,7 +35,8 @@ create table if not exists public.drafts (
   account_context jsonb not null default '{}'::jsonb,
   status score_status not null default 'draft',
   created_at timestamptz not null default now(),
-  updated_at timestamptz not null default now()
+  updated_at timestamptz not null default now(),
+  unique (id, user_id)
 );
 
 -- ----------
@@ -43,7 +44,7 @@ create table if not exists public.drafts (
 -- ----------
 create table if not exists public.scores (
   id uuid primary key default gen_random_uuid(),
-  draft_id uuid not null references public.drafts(id) on delete cascade,
+  draft_id uuid not null,
   user_id uuid not null references public.users(id) on delete cascade,
   model_version text not null default 'rules-v1',
   rule_version text not null default 'ruleset-2026-05',
@@ -55,7 +56,9 @@ create table if not exists public.scores (
   prediction_range_low integer,
   prediction_range_high integer,
   score_confidence numeric(4,3) check (score_confidence >= 0 and score_confidence <= 1),
-  created_at timestamptz not null default now()
+  created_at timestamptz not null default now(),
+  unique (id, user_id),
+  foreign key (draft_id, user_id) references public.drafts(id, user_id) on delete cascade
 );
 
 -- ----------
@@ -64,15 +67,18 @@ create table if not exists public.scores (
 create table if not exists public.published_posts (
   id uuid primary key default gen_random_uuid(),
   user_id uuid not null references public.users(id) on delete cascade,
-  draft_id uuid references public.drafts(id) on delete set null,
-  score_id uuid references public.scores(id) on delete set null,
+  draft_id uuid,
+  score_id uuid,
   source_mode api_mode not null,
   x_post_id text,
   post_url text,
   final_text text not null,
   published_at timestamptz not null,
   created_at timestamptz not null default now(),
-  unique(user_id, post_url)
+  unique (user_id, post_url),
+  unique (id, user_id),
+  foreign key (draft_id, user_id) references public.drafts(id, user_id) on delete set null,
+  foreign key (score_id, user_id) references public.scores(id, user_id) on delete set null
 );
 
 -- ----------
@@ -80,7 +86,7 @@ create table if not exists public.published_posts (
 -- ----------
 create table if not exists public.post_metrics (
   id bigserial primary key,
-  post_id uuid not null references public.published_posts(id) on delete cascade,
+  post_id uuid not null,
   user_id uuid not null references public.users(id) on delete cascade,
   source metric_source not null,
   captured_at timestamptz not null,
@@ -91,6 +97,13 @@ create table if not exists public.post_metrics (
   bookmarks integer,
   profile_visits integer,
   follower_growth integer,
+  check (impressions is null or impressions >= 0),
+  check (likes is null or likes >= 0),
+  check (replies is null or replies >= 0),
+  check (reposts is null or reposts >= 0),
+  check (bookmarks is null or bookmarks >= 0),
+  check (profile_visits is null or profile_visits >= 0),
+  check (follower_growth is null or follower_growth >= 0),
   engagement_rate numeric(8,5),
   impression_velocity numeric(12,4),
   reply_velocity numeric(12,4),
@@ -99,7 +112,8 @@ create table if not exists public.post_metrics (
   missing_fields text[] not null default '{}',
   is_user_edited boolean not null default false,
   created_at timestamptz not null default now(),
-  unique(post_id, captured_at)
+  unique(post_id, captured_at),
+  foreign key (post_id, user_id) references public.published_posts(id, user_id) on delete cascade
 );
 
 -- ----------
@@ -127,12 +141,13 @@ create table if not exists public.api_credentials (
 create table if not exists public.approval_actions (
   id uuid primary key default gen_random_uuid(),
   user_id uuid not null references public.users(id) on delete cascade,
-  post_id uuid references public.published_posts(id) on delete cascade,
+  post_id uuid,
   action_type text not null, -- reply_suggestion, timing_recommendation, risk_flag
   payload jsonb not null,
   approval_status text not null default 'pending' check (approval_status in ('pending','approved','rejected')),
   approved_at timestamptz,
-  created_at timestamptz not null default now()
+  created_at timestamptz not null default now(),
+  foreign key (post_id, user_id) references public.published_posts(id, user_id) on delete cascade
 );
 
 -- ----------
@@ -160,6 +175,7 @@ alter table public.approval_actions enable row level security;
 
 create policy "users_select_own" on public.users for select using (auth.uid() = id);
 create policy "users_update_own" on public.users for update using (auth.uid() = id);
+create policy "users_insert_own" on public.users for insert with check (auth.uid() = id);
 
 create policy "drafts_all_own" on public.drafts for all using (auth.uid() = user_id) with check (auth.uid() = user_id);
 create policy "scores_all_own" on public.scores for all using (auth.uid() = user_id) with check (auth.uid() = user_id);

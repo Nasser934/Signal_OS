@@ -5,7 +5,7 @@ from __future__ import annotations
 
 import re
 from typing import List, Optional
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel, Field
 
 app = FastAPI(title="Signal OS Scoring Service", version="0.1.0")
@@ -66,7 +66,11 @@ def health() -> dict:
 
 @app.post("/v1/score", response_model=ScoreResponse)
 def score_draft(payload: ScoreRequest) -> ScoreResponse:
-    components = [_hook_strength(payload.text), _clarity(payload.text), _reply_trigger(payload.text)]
+    text = payload.text.strip()
+    if not text:
+        raise HTTPException(status_code=422, detail="text must contain non-whitespace characters")
+
+    components = [_hook_strength(text), _clarity(text), _reply_trigger(text)]
     total = round(sum(c.score for c in components) / len(components), 2)
 
     top_strength = max(components, key=lambda c: c.score).name

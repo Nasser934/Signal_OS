@@ -48,22 +48,39 @@ export class ApiFallbackService {
     try {
       // In production: call your Next.js API route (/api/metrics/full)
       return await this.mockSource('full_api', req.postId);
-    } catch {
-      return this.tryByoApi({ ...context, mode: 'byo_api_key' }, req);
+    } catch (error) {
+      const reason = `Full API request failed: ${this.errorToReason(error)}`;
+      return this.tryByoApi({ ...context, mode: 'byo_api_key' }, req, reason);
     }
   }
 
-  private async tryByoApi(context: ModeContext, req: MetricsRequest): Promise<MetricsResult> {
+  private async tryByoApi(
+    context: ModeContext,
+    req: MetricsRequest,
+    priorReason?: string
+  ): Promise<MetricsResult> {
     if (!context.byoCredentialId) {
-      return this.manualFallback('Missing BYO credential; switching to manual mode');
+      return this.manualFallback(this.combineReasons(priorReason, 'Missing BYO credential; switching to manual mode'));
     }
 
     try {
       // In production: call /api/metrics/byo with credential reference only.
-      return await this.mockSource('byo_api_key', req.postId);
-    } catch {
-      return this.manualFallback('BYO API request failed; please enter metrics manually');
+      const result = await this.mockSource('byo_api_key', req.postId);
+      return priorReason ? { ...result, fallbackReason: priorReason } : result;
+    } catch (error) {
+      return this.manualFallback(
+        this.combineReasons(priorReason, `BYO API request failed: ${this.errorToReason(error)}`)
+      );
     }
+  }
+
+
+  private combineReasons(priorReason: string | undefined, nextReason: string): string {
+    return priorReason ? `${priorReason}; ${nextReason}` : nextReason;
+  }
+
+  private errorToReason(error: unknown): string {
+    return error instanceof Error ? error.message : String(error);
   }
 
   private manualFallback(reason: string): MetricsResult {

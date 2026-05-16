@@ -2,6 +2,7 @@
 
 import { useParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
+import { STORE_KEYS, readJson } from '@/lib/store/localStore';
 
 type StoredDraftRun = {
   id: string;
@@ -26,9 +27,7 @@ export default function ScorecardPage() {
   const [item, setItem] = useState<StoredDraftRun | null>(null);
 
   useEffect(() => {
-    const raw = window.localStorage.getItem('signalos:draftRuns');
-    if (!raw) return;
-    const list = JSON.parse(raw) as StoredDraftRun[];
+    const list = readJson<StoredDraftRun[]>(STORE_KEYS.draftRuns, []);
     setItem(list.find((entry) => entry.id === params.runId) ?? null);
   }, [params.runId]);
 

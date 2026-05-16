@@ -1,17 +1,17 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { STORE_KEYS } from '@/lib/store/localStore';
+import { STORE_KEYS, type ApiMode } from '@/lib/store/localStore';
 
 export default function ApiModePage() {
-  const [mode, setMode] = useState<'full_api' | 'byo_api_key' | 'manual'>('manual');
+  const [mode, setMode] = useState<ApiMode>('manual');
 
   useEffect(() => {
-    const saved = window.localStorage.getItem(STORE_KEYS.mode) as 'full_api' | 'byo_api_key' | 'manual' | null;
+    const saved = window.localStorage.getItem(STORE_KEYS.mode) as ApiMode | null;
     if (saved) setMode(saved);
   }, []);
 
-  function onChange(next: 'full_api' | 'byo_api_key' | 'manual') {
+  function onChange(next: ApiMode) {
     setMode(next);
     window.localStorage.setItem(STORE_KEYS.mode, next);
   }

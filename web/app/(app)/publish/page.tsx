@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { useState } from 'react';
-import { STORE_KEYS, type PublishedPost } from '@/lib/store/localStore';
+import { STORE_KEYS, readJson, writeJson, type PublishedPost } from '@/lib/store/localStore';
 
 export default function PublishPage() {
   const [draftText, setDraftText] = useState('');
@@ -19,9 +19,8 @@ export default function PublishPage() {
       return;
     }
     setPost(body.post);
-    const raw = window.localStorage.getItem(STORE_KEYS.posts);
-    const list = raw ? (JSON.parse(raw) as PublishedPost[]) : [];
-    window.localStorage.setItem(STORE_KEYS.posts, JSON.stringify([body.post, ...list].slice(0, 25)));
+    const list = readJson<PublishedPost[]>(STORE_KEYS.posts, []);
+    writeJson(STORE_KEYS.posts, [body.post, ...list].slice(0, 25));
     setMsg('Post marked as published.');
   }
 

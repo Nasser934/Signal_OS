@@ -2,21 +2,20 @@
 
 import { useParams } from 'next/navigation';
 import { useEffect, useMemo, useState } from 'react';
-import { STORE_KEYS, type MetricPoint } from '@/lib/store/localStore';
+import { STORE_KEYS, readJson, writeJson, type ApiMode, type MetricPoint } from '@/lib/store/localStore';
 
 const CHECKPOINTS: MetricPoint['checkpoint'][] = ['10m', '30m', '60m', '24h', '7d'];
 
 export default function CommandCenterPage() {
   const params = useParams<{ postId: string }>();
   const [metrics, setMetrics] = useState<MetricPoint[]>([]);
-  const [mode, setMode] = useState<'full_api' | 'byo_api_key' | 'manual'>('manual');
+  const [mode, setMode] = useState<ApiMode>('manual');
   const [checkpoint, setCheckpoint] = useState<MetricPoint['checkpoint']>('10m');
 
   useEffect(() => {
-    const savedMode = (window.localStorage.getItem(STORE_KEYS.mode) as 'full_api' | 'byo_api_key' | 'manual' | null) ?? 'manual';
+    const savedMode = (window.localStorage.getItem(STORE_KEYS.mode) as ApiMode | null) ?? 'manual';
     setMode(savedMode);
-    const raw = window.localStorage.getItem(STORE_KEYS.metrics);
-    const all = raw ? (JSON.parse(raw) as MetricPoint[]) : [];
+    const all = readJson<MetricPoint[]>(STORE_KEYS.metrics, []);
     setMetrics(all.filter((m) => m.postId === params.postId));
   }, [params.postId]);
 
@@ -37,9 +36,8 @@ export default function CommandCenterPage() {
     };
     const next = [item, ...metrics];
     setMetrics(next);
-    const raw = window.localStorage.getItem(STORE_KEYS.metrics);
-    const all = raw ? (JSON.parse(raw) as MetricPoint[]) : [];
-    window.localStorage.setItem(STORE_KEYS.metrics, JSON.stringify([item, ...all]));
+    const all = readJson<MetricPoint[]>(STORE_KEYS.metrics, []);
+    writeJson(STORE_KEYS.metrics, [item, ...all]);
   }
 
   const latest = useMemo(() => metrics[0], [metrics]);
@@ -56,7 +54,7 @@ export default function CommandCenterPage() {
         <button onClick={fetchCheckpoint}>Capture metrics</button>
       </section>
       {latest ? <section className="card"><h3>Latest snapshot ({latest.checkpoint})</h3><p>Impressions: {latest.impressions} | Likes: {latest.likes} | Replies: {latest.replies}</p></section> : null}
-      <section className="card"><h3>History</h3><ul>{metrics.map((m, i) => <li key={`${m.capturedAt}-${i}`}>{m.checkpoint} — {m.impressions} impressions ({m.source})</li>)}</ul></section>
+      <section className="card"><h3>History</h3><ul>{metrics.map((m, i) => <li key={`${m.capturedAt}-${m.checkpoint}`}>{m.checkpoint} — {m.impressions} impressions ({m.source})</li>)}</ul></section>
     </>
   );
 }

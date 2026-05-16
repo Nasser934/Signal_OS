@@ -45,22 +45,22 @@ This document turns the BRD into an implementation tracker, including what is co
 - [x] ✅ `FR-017` (P0): Add published post URL.
 - [x] ✅ `FR-018` (P0): Track first-hour metrics where API access exists.
 - [x] ✅ `FR-019` (P0): Allow manual metrics entry.
-- [ ] ⬜ `FR-020` (P0): Compare predicted vs actual outcomes.
-- [ ] ⬜ `FR-021` (P0): Generate post autopsy.
+- [x] ✅ `FR-020` (P0): Compare predicted vs actual outcomes.
+- [x] ✅ `FR-021` (P0): Generate post autopsy.
 
 ### 4) Reply Assistant
-- [ ] ⬜ `FR-022` (P0): Rank replies by response value.
-- [ ] ⬜ `FR-023` (P0): Suggest response drafts.
-- [ ] ⬜ `FR-024` (P0): Require human approval for every suggested reply.
-- [ ] ⬜ `FR-025` (P1): Flag potential negative threads.
-- [ ] ⬜ `FR-026` (P1): Recommend response timing.
+- [x] ✅ `FR-022` (P0): Rank replies by response value.
+- [x] ✅ `FR-023` (P0): Suggest response drafts.
+- [x] ✅ `FR-024` (P0): Require human approval for every suggested reply.
+- [x] ✅ `FR-025` (P1): Flag potential negative threads.
+- [x] ✅ `FR-026` (P1): Recommend response timing.
 
 ### 5) Weekly Report
-- [ ] ⬜ `FR-027` (P0): Generate weekly report.
-- [ ] ⬜ `FR-028` (P0): Include best/worst posts.
-- [ ] ⬜ `FR-029` (P0): Include topic-level insights.
-- [ ] ⬜ `FR-030` (P0): Include prediction accuracy.
-- [ ] ⬜ `FR-031` (P0): Recommend next-week actions.
+- [x] ✅ `FR-027` (P0): Generate weekly report.
+- [x] ✅ `FR-028` (P0): Include best/worst posts.
+- [x] ✅ `FR-029` (P0): Include topic-level insights.
+- [x] ✅ `FR-030` (P0): Include prediction accuracy.
+- [x] ✅ `FR-031` (P0): Recommend next-week actions.
 
 ---
 
@@ -86,14 +86,14 @@ This document turns the BRD into an implementation tracker, including what is co
 - [x] ✅ Build command-center UI modules for momentum and next actions.
 
 ### Phase 4 — Reply Assistant + Safety
-- [ ] Implement reply queue scoring/ranking.
-- [ ] Generate suggested responses with explicit approval gates.
-- [ ] Add negative-thread risk alerts and timing recommendations.
+- [x] ✅ Implement reply queue scoring/ranking.
+- [x] ✅ Generate suggested responses with explicit approval gates.
+- [x] ✅ Add negative-thread risk alerts and timing recommendations.
 
 ### Phase 5 — Learning Loop
-- [ ] Build post autopsy with prediction-vs-actual delta analysis.
-- [ ] Build weekly report generation workflow + UI delivery.
-- [ ] Add repeat/stop/test recommendation output.
+- [x] ✅ Build post autopsy with prediction-vs-actual delta analysis.
+- [x] ✅ Build weekly report generation workflow + UI delivery.
+- [x] ✅ Add repeat/stop/test recommendation output.
 
 ### Phase 6 — Commercial + Operations
 - [ ] Integrate Stripe plans and entitlement gates.

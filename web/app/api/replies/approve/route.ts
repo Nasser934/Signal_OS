@@ -1,0 +1,18 @@
+import { randomUUID } from 'crypto';
+import { NextResponse } from 'next/server';
+
+export async function POST(req: Request) {
+  const payload = (await req.json()) as { replyId?: string; approved?: boolean; draftResponse?: string };
+  if (!payload.replyId) {
+    return NextResponse.json({ error: 'replyId is required' }, { status: 400 });
+  }
+  return NextResponse.json({
+    action: {
+      id: randomUUID(),
+      replyId: payload.replyId,
+      approvalStatus: payload.approved ? 'approved' : 'rejected',
+      draftResponse: payload.draftResponse ?? '',
+      createdAt: new Date().toISOString(),
+    },
+  });
+}

@@ -1,9 +1,12 @@
 import { NextResponse } from 'next/server';
 import { getScorecard } from '@/lib/server/scorecardStore';
 
-export async function GET(_req: Request, context: { params: Promise<{ runId: string }> }) {
+export async function GET(
+  _req: Request,
+  context: { params: { runId: string } }
+) {
   try {
-    const { runId } = await context.params;
+    const { runId } = context.params;
     const item = await getScorecard(runId);
     if (!item) {
       return NextResponse.json({ error: 'Scorecard not found' }, { status: 404 });

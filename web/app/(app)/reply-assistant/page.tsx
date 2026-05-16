@@ -48,7 +48,7 @@ export default function ReplyAssistantPage() {
       action?: { approvalStatus: string; replyId: string };
     };
     if (body.action) {
-      setAudit((prev) => [`${body.action?.replyId}: ${body.action?.approvalStatus}`, ...prev]);
+      setAudit((prev) => [`${body.action.replyId}: ${body.action.approvalStatus}`, ...prev]);
     }
   }
 

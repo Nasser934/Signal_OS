@@ -41,10 +41,10 @@ This document turns the BRD into an implementation tracker, including what is co
 - [ ] ⬜ `FR-015` (P1): Recommend account-specific posting windows.
 
 ### 3) Publish Tracking
-- [ ] ⬜ `FR-016` (P0): Mark draft as published.
-- [ ] ⬜ `FR-017` (P0): Add published post URL.
-- [ ] ⬜ `FR-018` (P0): Track first-hour metrics where API access exists.
-- [ ] ⬜ `FR-019` (P0): Allow manual metrics entry.
+- [x] ✅ `FR-016` (P0): Mark draft as published.
+- [x] ✅ `FR-017` (P0): Add published post URL.
+- [x] ✅ `FR-018` (P0): Track first-hour metrics where API access exists.
+- [x] ✅ `FR-019` (P0): Allow manual metrics entry.
 - [ ] ⬜ `FR-020` (P0): Compare predicted vs actual outcomes.
 - [ ] ⬜ `FR-021` (P0): Generate post autopsy.
 
@@ -80,10 +80,10 @@ This document turns the BRD into an implementation tracker, including what is co
 - [x] ✅ Build shareable scorecard generation and read-only view.
 
 ### Phase 3 — Publish + Track
-- [ ] Implement publish workflow (mark published + URL capture).
-- [ ] Add 10m/30m/60m/24h/7d metrics checkpoint tracking.
-- [ ] Implement mode switching: Full API / BYO Key / Manual.
-- [ ] Build command-center UI modules for momentum and next actions.
+- [x] ✅ Implement publish workflow (mark published + URL capture).
+- [x] ✅ Add 10m/30m/60m/24h/7d metrics checkpoint tracking.
+- [x] ✅ Implement mode switching: Full API / BYO Key / Manual.
+- [x] ✅ Build command-center UI modules for momentum and next actions.
 
 ### Phase 4 — Reply Assistant + Safety
 - [ ] Implement reply queue scoring/ranking.

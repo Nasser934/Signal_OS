@@ -10,7 +10,7 @@ Core loop order: **Score → Improve → Publish → Track → Learn**
 - [Done] E0-T5 Define Next.js app/component architecture for Draft/Command-Center/Autopsy flows. Dependency: E0-T3, E0-T4.
 
 ## Epic 1 — Score (Draft Scoring UX + persistence)
-- [To Do] E1-T1 Build typed frontend scoring client for FastAPI `/v1/score` with robust error mapping. Dependency: E0-T3.
+- [Done] E1-T1 Build typed frontend scoring client for FastAPI `/v1/score` with robust error mapping. Dependency: E0-T3.
 - [To Do] E1-T2 Build Draft Score API route/server action to create draft + score records atomically. Dependency: E1-T1, E0-T1.
 - [To Do] E1-T3 Build Draft input form UI (text/topic/audience/tone + validation). Dependency: E1-T2.
 - [To Do] E1-T4 Build Score breakdown UI component from component-level scoring. Dependency: E1-T2.

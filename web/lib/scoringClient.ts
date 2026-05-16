@@ -61,13 +61,14 @@ export async function scoreDraft(
 
   const timeoutController = new AbortController();
   const timeout = setTimeout(() => timeoutController.abort(), timeoutMs);
+  const abortSignal = mergeAbortSignals(options?.signal, timeoutController.signal);
 
   try {
     const response = await fetch(`${baseUrl}/v1/score`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ ...input, text }),
-      signal: options?.signal ?? timeoutController.signal,
+      signal: abortSignal,
     });
 
     if (!response.ok) {
@@ -78,7 +79,7 @@ export async function scoreDraft(
       );
     }
 
-    const raw = (await response.json()) as RawScoreResponse;
+    const raw = (await response.json()) as unknown;
     return mapScoreResponse(raw);
   } catch (error) {
     if (error instanceof ScoringServiceError) {
@@ -86,7 +87,13 @@ export async function scoreDraft(
     }
 
     if (error instanceof Error && error.name === 'AbortError') {
-      throw new ScoringServiceError(`Scoring request timed out after ${timeoutMs}ms.`, 504);
+      const timedOut = timeoutController.signal.aborted;
+      throw new ScoringServiceError(
+        timedOut
+          ? `Scoring request timed out after ${timeoutMs}ms.`
+          : 'Scoring request was aborted by caller.',
+        timedOut ? 504 : 499
+      );
     }
 
     const message = error instanceof Error ? error.message : String(error);
@@ -96,7 +103,11 @@ export async function scoreDraft(
   }
 }
 
-function mapScoreResponse(raw: RawScoreResponse): ScoreOutput {
+function mapScoreResponse(raw: unknown): ScoreOutput {
+  if (!isRawScoreResponse(raw)) {
+    throw new ScoringServiceError('Scoring service returned an invalid payload shape.', 502);
+  }
+
   return {
     totalScore: raw.total_score,
     explanation: raw.explanation,
@@ -106,6 +117,59 @@ function mapScoreResponse(raw: RawScoreResponse): ScoreOutput {
     rewriteRecommendations: raw.rewrite_recommendations,
     rulesVersion: raw.rules_version,
   };
+}
+
+function isRawScoreResponse(value: unknown): value is RawScoreResponse {
+  if (!value || typeof value !== 'object') {
+    return false;
+  }
+
+  const candidate = value as Partial<RawScoreResponse>;
+  return (
+    typeof candidate.total_score === 'number' &&
+    typeof candidate.explanation === 'string' &&
+    typeof candidate.top_strength === 'string' &&
+    typeof candidate.biggest_weakness === 'string' &&
+    typeof candidate.rules_version === 'string' &&
+    Array.isArray(candidate.components) &&
+    candidate.components.every(isScoreComponent) &&
+    Array.isArray(candidate.rewrite_recommendations) &&
+    candidate.rewrite_recommendations.every((item) => typeof item === 'string')
+  );
+}
+
+function isScoreComponent(component: unknown): component is ScoreComponent {
+  if (!component || typeof component !== 'object') {
+    return false;
+  }
+
+  const candidate = component as Partial<ScoreComponent>;
+  return (
+    typeof candidate.name === 'string' &&
+    typeof candidate.score === 'number' &&
+    typeof candidate.rationale === 'string'
+  );
+}
+
+function mergeAbortSignals(
+  upstream: AbortSignal | undefined,
+  timeoutSignal: AbortSignal
+): AbortSignal {
+  if (!upstream) {
+    return timeoutSignal;
+  }
+
+  if (upstream.aborted) {
+    return upstream;
+  }
+
+  const mergedController = new AbortController();
+  const onAbort = () => mergedController.abort();
+
+  upstream.addEventListener('abort', onAbort, { once: true });
+  timeoutSignal.addEventListener('abort', onAbort, { once: true });
+
+  return mergedController.signal;
 }
 
 async function safeReadDetail(response: Response): Promise<string> {

@@ -67,10 +67,10 @@ This document turns the BRD into an implementation tracker, including what is co
 ## Remaining Implementation Activities
 
 ### Phase 1 — Foundation (Critical)
-- [ ] Scaffold Next.js application in `web/` using architecture route groups.
+- [x] ✅ Scaffold Next.js application in `web/` using architecture route groups.
 - [ ] Configure Supabase Auth + Postgres + baseline RLS policies.
 - [ ] Convert `db/schema.sql` into migration-managed schema.
-- [ ] Add `.env.example` and runtime configuration validation.
+- [x] ✅ Add `.env.example` and runtime configuration validation.
 - [ ] Add structured logging, error taxonomy, and audit logging hooks.
 
 ### Phase 2 — Draft Score MVP (Core Loop Entry)

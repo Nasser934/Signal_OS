@@ -1,122 +1,135 @@
 # Signal OS — Remaining Tasks, Activities, and Features
 
-This document translates the BRD into an execution checklist and clearly shows what remains.
+This document turns the BRD into an implementation tracker, including what is complete, what remains, and the recommended build order.
+
+## Status Legend
+
+- `⬜ Not started`
+- `🟨 In progress`
+- `✅ Done`
+- Priority tags: `P0` (MVP critical), `P1` (important but not blocking MVP completion)
 
 ## Current Repository State (as of 2026-05-16)
 
-- Product requirements are documented (`BRD.md`).
-- High-level product overview is documented (`README.md`).
-- Target app architecture is documented (`web/ARCHITECTURE.md`).
-- Database schema starter exists (`db/schema.sql`).
-- No runnable MVP application code is present yet (no `package.json`, `app/`, API routes, or scoring service code).
+- Product requirements exist in `BRD.md`.
+- Product summary exists in `README.md`.
+- Target UI/system layout exists in `web/ARCHITECTURE.md`.
+- A starter schema exists in `db/schema.sql`.
+- The repository currently appears documentation-first and does not yet include a complete runnable MVP application stack.
 
 ---
 
-## Delivery Status by MVP Feature
+## Functional Requirements Tracker (FR-001 to FR-031)
 
 ### 1) Draft Score
-- [ ] FR-001 User can paste a draft post
-- [ ] FR-002 Generate attention score
-- [ ] FR-003 Explain score
-- [ ] FR-004 Identify strongest weakness
-- [ ] FR-005 Provide 3 rewrite options
-- [ ] FR-006 Save draft versions (P1)
-- [ ] FR-007 Generate shareable scorecard
-- [ ] FR-008 Store prediction metadata
+- [ ] ⬜ `FR-001` (P0): User can paste a draft post.
+- [ ] ⬜ `FR-002` (P0): System generates an attention score.
+- [ ] ⬜ `FR-003` (P0): System explains the score.
+- [ ] ⬜ `FR-004` (P0): System identifies strongest weakness.
+- [ ] ⬜ `FR-005` (P0): System provides 3 rewrite options.
+- [ ] ⬜ `FR-006` (P1): User can save draft versions.
+- [ ] ⬜ `FR-007` (P0): User can generate a shareable scorecard.
+- [ ] ⬜ `FR-008` (P0): System stores prediction metadata.
 
 ### 2) Account Import
-- [ ] FR-009 Connect X account via API
-- [ ] FR-010 BYO API key
-- [ ] FR-011 Manual post data import
-- [ ] FR-012 Build account baseline
-- [ ] FR-013 Identify best historical posts
-- [ ] FR-014 Identify weak historical posts (P1)
-- [ ] FR-015 Recommend account-specific posting windows (P1)
+- [ ] ⬜ `FR-009` (P0): Connect X account via API.
+- [ ] ⬜ `FR-010` (P0): Support BYO API key.
+- [ ] ⬜ `FR-011` (P0): Support manual post data import.
+- [ ] ⬜ `FR-012` (P0): System creates account baseline.
+- [ ] ⬜ `FR-013` (P0): System identifies best historical posts.
+- [ ] ⬜ `FR-014` (P1): System identifies weak historical posts.
+- [ ] ⬜ `FR-015` (P1): Recommend account-specific posting windows.
 
 ### 3) Publish Tracking
-- [ ] FR-016 Mark draft as published
-- [ ] FR-017 Add published post URL
-- [ ] FR-018 Track first-hour metrics (API mode)
-- [ ] FR-019 Manually enter metrics
-- [ ] FR-020 Compare predicted vs actual
-- [ ] FR-021 Generate post autopsy
+- [ ] ⬜ `FR-016` (P0): Mark draft as published.
+- [ ] ⬜ `FR-017` (P0): Add published post URL.
+- [ ] ⬜ `FR-018` (P0): Track first-hour metrics where API access exists.
+- [ ] ⬜ `FR-019` (P0): Allow manual metrics entry.
+- [ ] ⬜ `FR-020` (P0): Compare predicted vs actual outcomes.
+- [ ] ⬜ `FR-021` (P0): Generate post autopsy.
 
 ### 4) Reply Assistant
-- [ ] FR-022 Rank replies by response value
-- [ ] FR-023 Suggest response drafts
-- [ ] FR-024 Require human approval for every reply
-- [ ] FR-025 Flag potential negative threads (P1)
-- [ ] FR-026 Recommend response timing (P1)
+- [ ] ⬜ `FR-022` (P0): Rank replies by response value.
+- [ ] ⬜ `FR-023` (P0): Suggest response drafts.
+- [ ] ⬜ `FR-024` (P0): Require human approval for every suggested reply.
+- [ ] ⬜ `FR-025` (P1): Flag potential negative threads.
+- [ ] ⬜ `FR-026` (P1): Recommend response timing.
 
 ### 5) Weekly Report
-- [ ] FR-027 Generate weekly report
-- [ ] FR-028 Include best/worst posts
-- [ ] FR-029 Include topic-level insights
-- [ ] FR-030 Include prediction accuracy
-- [ ] FR-031 Recommend next-week actions
+- [ ] ⬜ `FR-027` (P0): Generate weekly report.
+- [ ] ⬜ `FR-028` (P0): Include best/worst posts.
+- [ ] ⬜ `FR-029` (P0): Include topic-level insights.
+- [ ] ⬜ `FR-030` (P0): Include prediction accuracy.
+- [ ] ⬜ `FR-031` (P0): Recommend next-week actions.
 
 ---
 
-## What Remains (Execution Activities)
+## Remaining Implementation Activities
 
-## Phase 1 — Foundation (Critical)
-- [ ] Scaffold Next.js app in `web/` with route groups from architecture doc.
-- [ ] Set up Supabase project wiring (Auth + Postgres + RLS policies).
-- [ ] Implement base tables and migrations from `db/schema.sql`.
-- [ ] Add environment management (`.env.example`, runtime validation).
-- [ ] Add logging, error handling, and audit log plumbing.
+### Phase 1 — Foundation (Critical)
+- [ ] Scaffold Next.js application in `web/` using architecture route groups.
+- [ ] Configure Supabase Auth + Postgres + baseline RLS policies.
+- [ ] Convert `db/schema.sql` into migration-managed schema.
+- [ ] Add `.env.example` and runtime configuration validation.
+- [ ] Add structured logging, error taxonomy, and audit logging hooks.
 
-## Phase 2 — Draft Score MVP (Core loop start)
-- [ ] Build `/draft` UI (input + score breakdown + diagnosis + rewrites).
-- [ ] Implement scoring service contract and mocked rules engine.
-- [ ] Persist drafts, scores, rewrites, and scoring metadata.
-- [ ] Add shareable scorecard generation (URL/tokenized read view).
+### Phase 2 — Draft Score MVP (Core Loop Entry)
+- [ ] Build `/draft` experience (input, score, diagnosis, rewrites).
+- [ ] Implement scoring service interface (initial rules engine).
+- [ ] Persist draft, score, rewrite, and prediction metadata records.
+- [ ] Build shareable scorecard generation and read-only view.
 
-## Phase 3 — Publish + Track
-- [ ] Add publish workflow (mark published + post URL capture).
-- [ ] Build first-hour tracking checkpoints (10m/30m/60m + 24h/7d).
-- [ ] Implement API fallback modes (Full API / BYO Key / Manual).
-- [ ] Build command center UI with momentum/velocity/status components.
+### Phase 3 — Publish + Track
+- [ ] Implement publish workflow (mark published + URL capture).
+- [ ] Add 10m/30m/60m/24h/7d metrics checkpoint tracking.
+- [ ] Implement mode switching: Full API / BYO Key / Manual.
+- [ ] Build command-center UI modules for momentum and next actions.
 
-## Phase 4 — Reply Assistant + Safety
-- [ ] Build reply queue ranking and suggested responses.
-- [ ] Enforce explicit human approval on all outbound reply actions.
-- [ ] Add risk alerting for negative-thread detection.
+### Phase 4 — Reply Assistant + Safety
+- [ ] Implement reply queue scoring/ranking.
+- [ ] Generate suggested responses with explicit approval gates.
+- [ ] Add negative-thread risk alerts and timing recommendations.
 
-## Phase 5 — Learning Loop
-- [ ] Build post autopsy screen and prediction-vs-actual analysis.
-- [ ] Build weekly report job + delivery UI.
-- [ ] Add repeat/stop/test recommendations.
+### Phase 5 — Learning Loop
+- [ ] Build post autopsy with prediction-vs-actual delta analysis.
+- [ ] Build weekly report generation workflow + UI delivery.
+- [ ] Add repeat/stop/test recommendation output.
 
-## Phase 6 — Commercial + Ops
-- [ ] Stripe plans and entitlements (free prediction vs paid action).
-- [ ] Usage metering and limits by tier.
-- [ ] Monitoring/alerting + reliability dashboards.
-- [ ] Security hardening (credential encryption, deletion flows, admin controls).
+### Phase 6 — Commercial + Operations
+- [ ] Integrate Stripe plans and entitlement gates.
+- [ ] Add usage metering and tier-aware rate/feature limits.
+- [ ] Add monitoring, alerting, and reliability SLO dashboards.
+- [ ] Complete security hardening (encryption, deletion flows, admin constraints).
 
 ---
 
-## Recommended Next 10 Build Tasks (in order)
+## Recommended Next 10 Build Tasks (Ordered)
 
-1. Create Next.js app scaffold in `web/`.
-2. Add Supabase client and auth guards.
-3. Turn `db/schema.sql` into migrations and apply locally.
-4. Implement `/draft` page with saved draft persistence.
-5. Add rules-based scoring endpoint and explanation payload.
+1. Scaffold the Next.js app in `web/`.
+2. Wire Supabase client, auth, and session guards.
+3. Implement migrations from `db/schema.sql`.
+4. Build `/draft` page with draft persistence.
+5. Add scoring endpoint contract + explainability payload.
 6. Render score breakdown + top weakness + 3 rewrites.
-7. Add "mark as published" workflow and post URL capture.
-8. Add manual metrics entry and first-hour timeline UI.
-9. Implement prediction-vs-actual storage and autopsy skeleton.
-10. Add weekly report generation stub and UI placeholder.
+7. Implement “mark published” + post URL capture.
+8. Add manual metrics input + first-hour timeline.
+9. Persist prediction-vs-actual and add autopsy skeleton UI.
+10. Add weekly report job stub and report page shell.
 
 ---
 
-## Definition of "MVP Complete"
+## Definition of MVP Complete
 
-MVP is complete when:
-- [ ] All P0 requirements FR-001 through FR-031 are functionally delivered.
-- [ ] Core loop works end-to-end: Score → Improve → Publish → Track → Learn.
-- [ ] Fallback modes are usable (Full API / BYO / Manual).
-- [ ] Paid-only action surfaces are gated behind subscription.
-- [ ] Reply actions require human approval.
+MVP is complete when all conditions below are true:
 
+- [ ] All P0 FRs are delivered and testable end-to-end.
+- [ ] Core loop works in product flow: **Score → Improve → Publish → Track → Learn**.
+- [ ] Fallback modes are usable: Full API, BYO API key, and Manual mode.
+- [ ] “Paid gets action” gating is enforced for action surfaces.
+- [ ] Every reply action requires explicit human approval.
+
+## Suggested Review Cadence
+
+- Weekly: update FR status checkboxes and phase activity status.
+- End of sprint: re-prioritize “Next 10 Build Tasks” based on blockers and learning.
+- Monthly: confirm scope alignment against BRD product rules to prevent feature creep.

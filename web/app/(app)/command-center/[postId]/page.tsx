@@ -2,7 +2,13 @@
 
 import { useParams } from 'next/navigation';
 import { useEffect, useMemo, useState } from 'react';
-import { STORE_KEYS, readJson, writeJson, type ApiMode, type MetricPoint } from '@/lib/store/localStore';
+import {
+  STORE_KEYS,
+  readJson,
+  writeJson,
+  type ApiMode,
+  type MetricPoint,
+} from '@/lib/store/localStore';
 
 const CHECKPOINTS: MetricPoint['checkpoint'][] = ['10m', '30m', '60m', '24h', '7d'];
 
@@ -14,7 +20,8 @@ export default function CommandCenterPage() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const savedMode = (window.localStorage.getItem(STORE_KEYS.mode) as ApiMode | null) ?? 'manual';
+    const savedMode =
+      (window.localStorage.getItem(STORE_KEYS.mode) as ApiMode | null) ?? 'manual';
     setMode(savedMode);
     const all = readJson<MetricPoint[]>(STORE_KEYS.metrics, []);
     setMetrics(all.filter((m) => m.postId === params.postId));
@@ -29,7 +36,11 @@ export default function CommandCenterPage() {
         body: JSON.stringify({ mode, postId: params.postId }),
       });
       const body = (await response.json()) as {
-        result?: { source: MetricPoint['source']; capturedAt: string; metrics: Partial<MetricPoint> };
+        result?: {
+          source: MetricPoint['source'];
+          capturedAt: string;
+          metrics: Partial<MetricPoint>;
+        };
         error?: string;
       };
       if (!response.ok || !body.result) {
@@ -64,14 +75,38 @@ export default function CommandCenterPage() {
       <section className="card">
         <p>Post ID: {params.postId}</p>
         <label htmlFor="checkpoint">Checkpoint</label>
-        <select id="checkpoint" value={checkpoint} onChange={(e) => setCheckpoint(e.target.value as MetricPoint['checkpoint'])}>
-          {CHECKPOINTS.map((c) => <option key={c} value={c}>{c}</option>)}
+        <select
+          id="checkpoint"
+          value={checkpoint}
+          onChange={(e) => setCheckpoint(e.target.value as MetricPoint['checkpoint'])}
+        >
+          {CHECKPOINTS.map((c) => (
+            <option key={c} value={c}>
+              {c}
+            </option>
+          ))}
         </select>
         <button onClick={fetchCheckpoint}>Capture metrics</button>
         {error ? <p>Error: {error}</p> : null}
       </section>
-      {latest ? <section className="card"><h3>Latest snapshot ({latest.checkpoint})</h3><p>Impressions: {latest.impressions} | Likes: {latest.likes} | Replies: {latest.replies}</p></section> : null}
-      <section className="card"><h3>History</h3><ul>{metrics.map((m) => <li key={`${m.capturedAt}-${m.checkpoint}`}>{m.checkpoint} — {m.impressions} impressions ({m.source})</li>)}</ul></section>
+      {latest ? (
+        <section className="card">
+          <h3>Latest snapshot ({latest.checkpoint})</h3>
+          <p>
+            Impressions: {latest.impressions} | Likes: {latest.likes} | Replies: {latest.replies}
+          </p>
+        </section>
+      ) : null}
+      <section className="card">
+        <h3>History</h3>
+        <ul>
+          {metrics.map((m) => (
+            <li key={`${m.capturedAt}-${m.checkpoint}`}>
+              {m.checkpoint} — {m.impressions} impressions ({m.source})
+            </li>
+          ))}
+        </ul>
+      </section>
     </>
   );
 }

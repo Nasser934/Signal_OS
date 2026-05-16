@@ -19,11 +19,37 @@ export default function WeeklyReportPage() {
   async function generate() {
     const runs = readJson<StoredDraftRun[]>(STORE_KEYS.draftRuns, []);
     const metrics = readJson<MetricPoint[]>(STORE_KEYS.metrics, []);
-    const posts = metrics.map((m) => ({ score: runs[0]?.score.totalScore ?? 0, impressions: m.impressions, topic: runs[0]?.topic ?? 'general' }));
-    const res = await fetch('/api/weekly-report', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ posts }) });
+    const posts = metrics.map((m) => ({
+      score: runs[0]?.score.totalScore ?? 0,
+      impressions: m.impressions,
+      topic: runs[0]?.topic ?? 'general',
+    }));
+
+    const res = await fetch('/api/weekly-report', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ posts }),
+    });
     const body = (await res.json()) as { report: Report | null };
     setReport(body.report);
   }
 
-  return (<><h1>Weekly Report</h1><section className="card"><button onClick={generate}>Generate report</button></section>{report ? <section className="card"><p>{report.averageScore}</p><ul>{report.nextWeekActions.map((a) => <li key={a}>{a}</li>)}</ul></section> : null}</>);
+  return (
+    <>
+      <h1>Weekly Report</h1>
+      <section className="card">
+        <button onClick={generate}>Generate report</button>
+      </section>
+      {report ? (
+        <section className="card">
+          <p>{report.averageScore}</p>
+          <ul>
+            {report.nextWeekActions.map((a) => (
+              <li key={a}>{a}</li>
+            ))}
+          </ul>
+        </section>
+      ) : null}
+    </>
+  );
 }

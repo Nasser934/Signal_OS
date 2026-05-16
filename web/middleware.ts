@@ -2,7 +2,16 @@ import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 
 function isProtectedPath(pathname: string): boolean {
-  return pathname.startsWith('/api') || pathname.startsWith('/draft') || pathname.startsWith('/publish') || pathname.startsWith('/command-center') || pathname.startsWith('/reply-assistant') || pathname.startsWith('/autopsy') || pathname.startsWith('/weekly-report') || pathname.startsWith('/settings');
+  return (
+    pathname.startsWith('/api') ||
+    pathname.startsWith('/draft') ||
+    pathname.startsWith('/publish') ||
+    pathname.startsWith('/command-center') ||
+    pathname.startsWith('/reply-assistant') ||
+    pathname.startsWith('/autopsy') ||
+    pathname.startsWith('/weekly-report') ||
+    pathname.startsWith('/settings')
+  );
 }
 
 export function middleware(req: NextRequest) {
@@ -10,11 +19,15 @@ export function middleware(req: NextRequest) {
     return NextResponse.next();
   }
 
-  const sessionToken = req.cookies.get('signalos_session')?.value ?? req.headers.get('x-signalos-session');
+  const sessionToken =
+    req.cookies.get('signalos_session')?.value ??
+    req.headers.get('x-signalos-session');
+
   if (!sessionToken) {
     if (req.nextUrl.pathname.startsWith('/api')) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
+
     return NextResponse.redirect(new URL('/', req.url));
   }
 

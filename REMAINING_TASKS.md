@@ -22,13 +22,13 @@ This document turns the BRD into an implementation tracker, including what is co
 ## Functional Requirements Tracker (FR-001 to FR-031)
 
 ### 1) Draft Score
-- [ ] ⬜ `FR-001` (P0): User can paste a draft post.
-- [ ] ⬜ `FR-002` (P0): System generates an attention score.
-- [ ] ⬜ `FR-003` (P0): System explains the score.
+- [x] ✅ `FR-001` (P0): User can paste a draft post.
+- [x] ✅ `FR-002` (P0): System generates an attention score.
+- [x] ✅ `FR-003` (P0): System explains the score.
 - [ ] ⬜ `FR-004` (P0): System identifies strongest weakness.
-- [ ] ⬜ `FR-005` (P0): System provides 3 rewrite options.
-- [ ] ⬜ `FR-006` (P1): User can save draft versions.
-- [ ] ⬜ `FR-007` (P0): User can generate a shareable scorecard.
+- [x] ✅ `FR-005` (P0): System provides 3 rewrite options.
+- [x] ✅ `FR-006` (P1): User can save draft versions.
+- [x] ✅ `FR-007` (P0): User can generate a shareable scorecard.
 - [ ] ⬜ `FR-008` (P0): System stores prediction metadata.
 
 ### 2) Account Import
@@ -74,10 +74,10 @@ This document turns the BRD into an implementation tracker, including what is co
 - [ ] Add structured logging, error taxonomy, and audit logging hooks.
 
 ### Phase 2 — Draft Score MVP (Core Loop Entry)
-- [ ] Build `/draft` experience (input, score, diagnosis, rewrites).
-- [ ] Implement scoring service interface (initial rules engine).
-- [ ] Persist draft, score, rewrite, and prediction metadata records.
-- [ ] Build shareable scorecard generation and read-only view.
+- [x] ✅ Build `/draft` experience (input, score, diagnosis, rewrites).
+- [x] ✅ Implement scoring service interface (initial rules engine).
+- [x] ✅ Persist draft, score, rewrite, and prediction metadata records.
+- [x] ✅ Build shareable scorecard generation and read-only view.
 
 ### Phase 3 — Publish + Track
 - [ ] Implement publish workflow (mark published + URL capture).

@@ -10,16 +10,31 @@ export default function ScorecardPage() {
   const [item, setItem] = useState<StoredDraftRun | null>(null);
 
   useEffect(() => {
-    const list = readJson<StoredDraftRun[]>(STORE_KEYS.draftRuns, []);
-    setItem(list.find((entry) => entry.id === params.runId) ?? null);
+    async function load() {
+      const response = await fetch(`/api/scorecards/${params.runId}`);
+      if (response.ok) {
+        const body = (await response.json()) as { item: StoredDraftRun };
+        setItem(body.item);
+        return;
+      }
+
+      const list = readJson<StoredDraftRun[]>(STORE_KEYS.draftRuns, []);
+      setItem(list.find((entry) => entry.id === params.runId) ?? null);
+    }
+
+    load();
   }, [params.runId]);
 
-  if (!item) return <main><h1>Scorecard not found</h1></main>;
+  if (!item) {
+    return <main><h1>Scorecard not found</h1></main>;
+  }
 
   return (
     <main>
       <h1>Signal OS Scorecard</h1>
-      <p>Score: <strong>{item.score.totalScore}/100</strong></p>
+      <p>
+        Score: <strong>{item.score.totalScore}/100</strong>
+      </p>
       <p>{item.score.explanation}</p>
       <p><strong>Top strength:</strong> {item.score.topStrength}</p>
       <p><strong>Biggest weakness:</strong> {item.score.biggestWeakness}</p>

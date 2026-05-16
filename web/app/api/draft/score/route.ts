@@ -1,12 +1,31 @@
 import { randomUUID } from 'crypto';
 import { NextResponse } from 'next/server';
 import { scoreDraft, ScoringServiceError } from '@/lib/scoringClient';
+import { saveScorecard } from '@/lib/server/scorecardStore';
+import type { StoredDraftRun } from '@/types/scoring';
 
 export async function POST(req: Request) {
   try {
-    const payload = (await req.json()) as { text: string; topic?: string; audience?: string; tone?: string };
+    const payload = (await req.json()) as {
+      text: string;
+      topic?: string;
+      audience?: string;
+      tone?: string;
+    };
     const data = await scoreDraft(payload);
-    return NextResponse.json({ data, runId: randomUUID() });
+    const runId = randomUUID();
+    const run: StoredDraftRun = {
+      id: runId,
+      createdAt: new Date().toISOString(),
+      text: payload.text,
+      topic: payload.topic,
+      audience: payload.audience,
+      tone: payload.tone,
+      score: data,
+    };
+    await saveScorecard(run);
+
+    return NextResponse.json({ data, runId });
   } catch (error) {
     if (error instanceof ScoringServiceError) {
       return NextResponse.json({ error: error.message }, { status: error.status });

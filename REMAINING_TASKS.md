@@ -69,9 +69,9 @@ This document turns the BRD into an implementation tracker, including what is co
 ### Phase 1 — Foundation (Critical)
 - [x] ✅ Scaffold Next.js application in `web/` using architecture route groups.
 - [ ] Configure Supabase Auth + Postgres + baseline RLS policies.
-- [ ] Convert `db/schema.sql` into migration-managed schema.
+- [x] ✅ Convert `db/schema.sql` into migration-managed schema.
 - [x] ✅ Add `.env.example` and runtime configuration validation.
-- [ ] Add structured logging, error taxonomy, and audit logging hooks.
+- [x] ✅ Add structured logging, error taxonomy, and audit logging hooks.
 
 ### Phase 2 — Draft Score MVP (Core Loop Entry)
 - [x] ✅ Build `/draft` experience (input, score, diagnosis, rewrites).
@@ -96,9 +96,9 @@ This document turns the BRD into an implementation tracker, including what is co
 - [x] ✅ Add repeat/stop/test recommendation output.
 
 ### Phase 6 — Commercial + Operations
-- [ ] Integrate Stripe plans and entitlement gates.
-- [ ] Add usage metering and tier-aware rate/feature limits.
-- [ ] Add monitoring, alerting, and reliability SLO dashboards.
+- [x] ✅ Integrate Stripe plans and entitlement gates.
+- [x] ✅ Add usage metering and tier-aware rate/feature limits.
+- [x] ✅ Add monitoring, alerting, and reliability SLO dashboards.
 - [ ] Complete security hardening (encryption, deletion flows, admin constraints).
 
 ---

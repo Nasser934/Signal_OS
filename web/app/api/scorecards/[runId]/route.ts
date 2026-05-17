@@ -3,10 +3,10 @@ import { getScorecard } from '@/lib/server/scorecardStore';
 
 export async function GET(
   _req: Request,
-  context: { params: { runId: string } }
+  context: { params: Promise<{ runId: string }> }
 ) {
   try {
-    const { runId } = context.params;
+    const { runId } = await context.params;
     const item = await getScorecard(runId);
     if (!item) {
       return NextResponse.json({ error: 'Scorecard not found' }, { status: 404 });

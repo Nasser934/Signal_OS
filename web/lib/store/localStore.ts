@@ -29,17 +29,25 @@ export const STORE_KEYS = {
 
 export function readJson<T>(key: string, fallback: T): T {
   if (typeof window === 'undefined') return fallback;
-  const raw = window.localStorage.getItem(key);
-  if (!raw) return fallback;
   try {
+    const raw = window.localStorage.getItem(key);
+    if (!raw) return fallback;
     return JSON.parse(raw) as T;
-  } catch {
-    window.localStorage.removeItem(key);
+  } catch (error) {
+    try {
+      window.localStorage.removeItem(key);
+    } catch {
+      // Swallow removeItem errors
+    }
     return fallback;
   }
 }
 
 export function writeJson<T>(key: string, value: T): void {
   if (typeof window === 'undefined') return;
-  window.localStorage.setItem(key, JSON.stringify(value));
+  try {
+    window.localStorage.setItem(key, JSON.stringify(value));
+  } catch (error) {
+    // Swallow storage quota/security errors
+  }
 }

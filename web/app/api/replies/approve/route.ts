@@ -6,6 +6,9 @@ export async function POST(req: Request) {
   if (!payload.replyId) {
     return NextResponse.json({ error: 'replyId is required' }, { status: 400 });
   }
+  if (typeof payload.approved !== 'boolean') {
+    return NextResponse.json({ error: 'approved must be a boolean value' }, { status: 400 });
+  }
   return NextResponse.json({
     action: {
       id: randomUUID(),

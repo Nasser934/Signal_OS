@@ -3,6 +3,25 @@ import path from 'path';
 import type { StoredDraftRun } from '@/types/scoring';
 
 const STORE_FILE = path.join('/tmp', 'signalos-scorecards.json');
+const LOCK_FILE = path.join('/tmp', 'signalos-scorecards.lock');
+
+let lockPromise: Promise<void> | null = null;
+
+async function acquireLock(): Promise<() => Promise<void>> {
+  while (lockPromise) {
+    await lockPromise;
+  }
+
+  let releaseLock: (() => void) | null = null;
+  lockPromise = new Promise<void>((resolve) => {
+    releaseLock = () => resolve();
+  });
+
+  return async () => {
+    if (releaseLock) releaseLock();
+    lockPromise = null;
+  };
+}
 
 async function readAll(): Promise<Record<string, StoredDraftRun>> {
   try {
@@ -14,13 +33,20 @@ async function readAll(): Promise<Record<string, StoredDraftRun>> {
 }
 
 async function writeAll(data: Record<string, StoredDraftRun>): Promise<void> {
-  await fs.writeFile(STORE_FILE, JSON.stringify(data), 'utf8');
+  const tempFile = `${STORE_FILE}.tmp.${Date.now()}`;
+  await fs.writeFile(tempFile, JSON.stringify(data), 'utf8');
+  await fs.rename(tempFile, STORE_FILE);
 }
 
 export async function saveScorecard(run: StoredDraftRun): Promise<void> {
-  const all = await readAll();
-  all[run.id] = run;
-  await writeAll(all);
+  const release = await acquireLock();
+  try {
+    const all = await readAll();
+    all[run.id] = run;
+    await writeAll(all);
+  } finally {
+    await release();
+  }
 }
 
 export async function getScorecard(runId: string): Promise<StoredDraftRun | null> {

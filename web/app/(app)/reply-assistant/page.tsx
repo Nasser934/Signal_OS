@@ -29,26 +29,59 @@ export default function ReplyAssistantPage() {
       }))
       .filter((r) => r.text.length > 0);
 
-    const res = await fetch('/api/replies/suggest', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ replies }),
-    });
-    const body = (await res.json()) as { items?: ReplyItem[] };
-    setItems(body.items ?? []);
+    try {
+      const res = await fetch('/api/replies/suggest', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ replies }),
+      });
+      if (!res.ok) {
+        let errorMsg = 'Failed to rank replies';
+        try {
+          const errBody = await res.json();
+          errorMsg = errBody.error ?? errorMsg;
+        } catch {
+          errorMsg = await res.text();
+        }
+        setAudit((prev) => [`Error: ${errorMsg}`, ...prev]);
+        setItems([]);
+        return;
+      }
+      const body = (await res.json()) as { items?: ReplyItem[] };
+      setItems(body.items ?? []);
+    } catch (error) {
+      setAudit((prev) => [`Network error: ${error instanceof Error ? error.message : 'Unknown error'}`, ...prev]);
+      setItems([]);
+    }
   }
 
   async function approve(replyId: string, draftResponse: string, approved: boolean) {
-    const res = await fetch('/api/replies/approve', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ replyId, draftResponse, approved }),
-    });
-    const body = (await res.json()) as {
-      action?: { approvalStatus: string; replyId: string };
-    };
-    if (body.action) {
-      setAudit((prev) => [`${body.action.replyId}: ${body.action.approvalStatus}`, ...prev]);
+    try {
+      const res = await fetch('/api/replies/approve', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ replyId, draftResponse, approved }),
+      });
+      if (!res.ok) {
+        let errorMsg = 'Failed to approve reply';
+        try {
+          const errBody = await res.json();
+          errorMsg = errBody.error ?? errorMsg;
+        } catch {
+          errorMsg = await res.text();
+        }
+        setAudit((prev) => [`Error: ${errorMsg}`, ...prev]);
+        return;
+      }
+      const body = (await res.json()) as {
+        action?: { approvalStatus: string; replyId: string };
+      };
+      if (body.action) {
+        const action = body.action;
+        setAudit((prev) => [`${action.replyId}: ${action.approvalStatus}`, ...prev]);
+      }
+    } catch (error) {
+      setAudit((prev) => [`Network error: ${error instanceof Error ? error.message : 'Unknown error'}`, ...prev]);
     }
   }
 

@@ -1,7 +1,12 @@
 import { NextResponse } from 'next/server';
 
 export async function POST(req: Request) {
-  const payload = (await req.json()) as { posts?: { score?: number; impressions?: number; topic?: string }[] };
+  let payload: { posts?: { score?: number; impressions?: number; topic?: string }[] };
+  try {
+    payload = (await req.json()) as { posts?: { score?: number; impressions?: number; topic?: string }[] };
+  } catch (error) {
+    return NextResponse.json({ error: 'Invalid or empty JSON in request body' }, { status: 400 });
+  }
   const posts = payload.posts ?? [];
   if (!posts.length) return NextResponse.json({ report: null });
 

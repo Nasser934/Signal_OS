@@ -96,7 +96,7 @@ This document turns the BRD into an implementation tracker, including what is co
 - [x] ✅ Add repeat/stop/test recommendation output.
 
 ### Phase 6 — Commercial + Operations
-- [x] ✅ Integrate Stripe plans and entitlement gates.
+- [ ] ⚠️ Integrate Stripe plans and entitlement gates (in-progress).
 - [x] ✅ Add usage metering and tier-aware rate/feature limits.
 - [x] ✅ Add monitoring, alerting, and reliability SLO dashboards.
 - [ ] Complete security hardening (encryption, deletion flows, admin constraints).

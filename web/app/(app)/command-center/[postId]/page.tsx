@@ -58,8 +58,7 @@ export default function CommandCenterPage() {
         reposts: Number(body.result.metrics.reposts ?? 0),
         bookmarks: Number(body.result.metrics.bookmarks ?? 0),
       };
-      const next = [item, ...metrics];
-      setMetrics(next);
+      setMetrics((prev) => [item, ...prev]);
       const all = readJson<MetricPoint[]>(STORE_KEYS.metrics, []);
       writeJson(STORE_KEYS.metrics, [item, ...all]);
     } catch (err) {

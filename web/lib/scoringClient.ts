@@ -53,7 +53,9 @@ export async function scoreDraft(input: ScoreInput, options?: { baseUrl?: string
   const baseUrl = options?.baseUrl ?? env.SCORING_SERVICE_URL;
   const timeoutController = new AbortController();
   const timeout = setTimeout(() => timeoutController.abort(), timeoutMs);
-  const abortSignal = options?.signal ?? timeoutController.signal;
+  const abortSignal = options?.signal
+    ? AbortSignal.any([timeoutController.signal, options.signal])
+    : timeoutController.signal;
 
   try {
     const response = await fetch(`${baseUrl}/v1/score`, {

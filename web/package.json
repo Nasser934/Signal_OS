@@ -17,8 +17,10 @@
     "zod": "3.23.8"
   },
   "devDependencies": {
+    "@next/eslint-plugin-next": "^15.3.1",
     "@types/node": "22.15.18",
     "@types/react": "19.1.5",
+    "eslint": "^9.0.0",
     "typescript": "5.8.3",
     "vitest": "2.1.8"
   }

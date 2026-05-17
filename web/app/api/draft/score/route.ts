@@ -6,12 +6,27 @@ import type { StoredDraftRun } from '@/types/scoring';
 
 export async function POST(req: Request) {
   try {
-    const payload = (await req.json()) as {
+    let payload: {
       text: string;
       topic?: string;
       audience?: string;
       tone?: string;
     };
+    try {
+      payload = (await req.json()) as {
+        text: string;
+        topic?: string;
+        audience?: string;
+        tone?: string;
+      };
+    } catch (error) {
+      return NextResponse.json({ error: 'Invalid JSON in request body' }, { status: 400 });
+    }
+
+    if (!payload.text || typeof payload.text !== 'string' || !payload.text.trim()) {
+      return NextResponse.json({ error: 'text is required and must be a non-empty string' }, { status: 400 });
+    }
+
     const data = await scoreDraft(payload);
     const runId = randomUUID();
     const run: StoredDraftRun = {

@@ -3,7 +3,12 @@ import { NextResponse } from 'next/server';
 const RISK_TERMS = ['scam', 'fraud', 'idiot', 'hate', 'angry', 'boycott'];
 
 export async function POST(req: Request) {
-  const payload = (await req.json()) as { replies?: { id: string; text: string; likes?: number }[] };
+  let payload: { replies?: { id: string; text: string; likes?: number }[] };
+  try {
+    payload = (await req.json()) as { replies?: { id: string; text: string; likes?: number }[] };
+  } catch {
+    return NextResponse.json({ error: 'Invalid JSON in request body' }, { status: 400 });
+  }
 
   if (!payload.replies || !Array.isArray(payload.replies)) {
     return NextResponse.json({ error: 'replies must be an array' }, { status: 400 });

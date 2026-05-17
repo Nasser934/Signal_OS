@@ -3,7 +3,6 @@ import path from 'path';
 import type { StoredDraftRun } from '@/types/scoring';
 
 const STORE_FILE = path.join('/tmp', 'signalos-scorecards.json');
-const LOCK_FILE = path.join('/tmp', 'signalos-scorecards.lock');
 
 let lockPromise: Promise<void> | null = null;
 

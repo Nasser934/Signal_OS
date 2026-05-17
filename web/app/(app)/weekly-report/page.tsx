@@ -21,10 +21,12 @@ export default function WeeklyReportPage() {
     setError(null);
     const runs = readJson<StoredDraftRun[]>(STORE_KEYS.draftRuns, []);
     const metrics = readJson<MetricPoint[]>(STORE_KEYS.metrics, []);
-    const posts = metrics.map((m) => ({
-      score: runs[0]?.score.totalScore ?? 0,
-      impressions: m.impressions,
-      topic: runs[0]?.topic ?? 'general',
+    const totalImpressions = metrics.reduce((acc, m) => acc + m.impressions, 0);
+    const avgImpressions = runs.length > 0 ? Math.round(totalImpressions / runs.length) : 0;
+    const posts = runs.map((run) => ({
+      score: run.score.totalScore,
+      impressions: avgImpressions,
+      topic: run.topic ?? 'general',
     }));
 
     try {

@@ -34,15 +34,15 @@ export default function ScorecardPage() {
   }, [params.runId]);
 
   if (loading) {
-    return <main><h1>Loading...</h1></main>;
+    return <><h1>Loading...</h1></>;
   }
 
   if (!item) {
-    return <main><h1>Scorecard not found</h1></main>;
+    return <><h1>Scorecard not found</h1></>;
   }
 
   return (
-    <main>
+    <>
       <h1>Signal OS Scorecard</h1>
       <p>
         Score: <strong>{item.score.totalScore}/100</strong>
@@ -51,6 +51,6 @@ export default function ScorecardPage() {
       <p><strong>Top strength:</strong> {item.score.topStrength}</p>
       <p><strong>Biggest weakness:</strong> {item.score.biggestWeakness}</p>
       <pre>{item.text}</pre>
-    </main>
+    </>
   );
 }

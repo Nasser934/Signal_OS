@@ -22,13 +22,13 @@ This document turns the BRD into an implementation tracker, including what is co
 ## Functional Requirements Tracker (FR-001 to FR-031)
 
 ### 1) Draft Score
-- [ ] ⬜ `FR-001` (P0): User can paste a draft post.
-- [ ] ⬜ `FR-002` (P0): System generates an attention score.
-- [ ] ⬜ `FR-003` (P0): System explains the score.
+- [x] ✅ `FR-001` (P0): User can paste a draft post.
+- [x] ✅ `FR-002` (P0): System generates an attention score.
+- [x] ✅ `FR-003` (P0): System explains the score.
 - [ ] ⬜ `FR-004` (P0): System identifies strongest weakness.
-- [ ] ⬜ `FR-005` (P0): System provides 3 rewrite options.
-- [ ] ⬜ `FR-006` (P1): User can save draft versions.
-- [ ] ⬜ `FR-007` (P0): User can generate a shareable scorecard.
+- [x] ✅ `FR-005` (P0): System provides 3 rewrite options.
+- [x] ✅ `FR-006` (P1): User can save draft versions.
+- [x] ✅ `FR-007` (P0): User can generate a shareable scorecard.
 - [ ] ⬜ `FR-008` (P0): System stores prediction metadata.
 
 ### 2) Account Import
@@ -41,64 +41,64 @@ This document turns the BRD into an implementation tracker, including what is co
 - [ ] ⬜ `FR-015` (P1): Recommend account-specific posting windows.
 
 ### 3) Publish Tracking
-- [ ] ⬜ `FR-016` (P0): Mark draft as published.
-- [ ] ⬜ `FR-017` (P0): Add published post URL.
-- [ ] ⬜ `FR-018` (P0): Track first-hour metrics where API access exists.
-- [ ] ⬜ `FR-019` (P0): Allow manual metrics entry.
-- [ ] ⬜ `FR-020` (P0): Compare predicted vs actual outcomes.
-- [ ] ⬜ `FR-021` (P0): Generate post autopsy.
+- [x] ✅ `FR-016` (P0): Mark draft as published.
+- [x] ✅ `FR-017` (P0): Add published post URL.
+- [x] ✅ `FR-018` (P0): Track first-hour metrics where API access exists.
+- [x] ✅ `FR-019` (P0): Allow manual metrics entry.
+- [x] ✅ `FR-020` (P0): Compare predicted vs actual outcomes.
+- [x] ✅ `FR-021` (P0): Generate post autopsy.
 
 ### 4) Reply Assistant
-- [ ] ⬜ `FR-022` (P0): Rank replies by response value.
-- [ ] ⬜ `FR-023` (P0): Suggest response drafts.
-- [ ] ⬜ `FR-024` (P0): Require human approval for every suggested reply.
-- [ ] ⬜ `FR-025` (P1): Flag potential negative threads.
-- [ ] ⬜ `FR-026` (P1): Recommend response timing.
+- [x] ✅ `FR-022` (P0): Rank replies by response value.
+- [x] ✅ `FR-023` (P0): Suggest response drafts.
+- [x] ✅ `FR-024` (P0): Require human approval for every suggested reply.
+- [x] ✅ `FR-025` (P1): Flag potential negative threads.
+- [x] ✅ `FR-026` (P1): Recommend response timing.
 
 ### 5) Weekly Report
-- [ ] ⬜ `FR-027` (P0): Generate weekly report.
-- [ ] ⬜ `FR-028` (P0): Include best/worst posts.
-- [ ] ⬜ `FR-029` (P0): Include topic-level insights.
-- [ ] ⬜ `FR-030` (P0): Include prediction accuracy.
-- [ ] ⬜ `FR-031` (P0): Recommend next-week actions.
+- [x] ✅ `FR-027` (P0): Generate weekly report.
+- [x] ✅ `FR-028` (P0): Include best/worst posts.
+- [x] ✅ `FR-029` (P0): Include topic-level insights.
+- [x] ✅ `FR-030` (P0): Include prediction accuracy.
+- [x] ✅ `FR-031` (P0): Recommend next-week actions.
 
 ---
 
 ## Remaining Implementation Activities
 
 ### Phase 1 — Foundation (Critical)
-- [ ] Scaffold Next.js application in `web/` using architecture route groups.
+- [x] ✅ Scaffold Next.js application in `web/` using architecture route groups.
 - [ ] Configure Supabase Auth + Postgres + baseline RLS policies.
-- [ ] Convert `db/schema.sql` into migration-managed schema.
-- [ ] Add `.env.example` and runtime configuration validation.
-- [ ] Add structured logging, error taxonomy, and audit logging hooks.
+- [x] ✅ Convert `db/schema.sql` into migration-managed schema.
+- [x] ✅ Add `.env.example` and runtime configuration validation.
+- [x] ✅ Add structured logging, error taxonomy, and audit logging hooks.
 
 ### Phase 2 — Draft Score MVP (Core Loop Entry)
-- [ ] Build `/draft` experience (input, score, diagnosis, rewrites).
-- [ ] Implement scoring service interface (initial rules engine).
-- [ ] Persist draft, score, rewrite, and prediction metadata records.
-- [ ] Build shareable scorecard generation and read-only view.
+- [x] ✅ Build `/draft` experience (input, score, diagnosis, rewrites).
+- [x] ✅ Implement scoring service interface (initial rules engine).
+- [x] ✅ Persist draft, score, rewrite, and prediction metadata records.
+- [x] ✅ Build shareable scorecard generation and read-only view.
 
 ### Phase 3 — Publish + Track
-- [ ] Implement publish workflow (mark published + URL capture).
-- [ ] Add 10m/30m/60m/24h/7d metrics checkpoint tracking.
-- [ ] Implement mode switching: Full API / BYO Key / Manual.
-- [ ] Build command-center UI modules for momentum and next actions.
+- [x] ✅ Implement publish workflow (mark published + URL capture).
+- [x] ✅ Add 10m/30m/60m/24h/7d metrics checkpoint tracking.
+- [x] ✅ Implement mode switching: Full API / BYO Key / Manual.
+- [x] ✅ Build command-center UI modules for momentum and next actions.
 
 ### Phase 4 — Reply Assistant + Safety
-- [ ] Implement reply queue scoring/ranking.
-- [ ] Generate suggested responses with explicit approval gates.
-- [ ] Add negative-thread risk alerts and timing recommendations.
+- [x] ✅ Implement reply queue scoring/ranking.
+- [x] ✅ Generate suggested responses with explicit approval gates.
+- [x] ✅ Add negative-thread risk alerts and timing recommendations.
 
 ### Phase 5 — Learning Loop
-- [ ] Build post autopsy with prediction-vs-actual delta analysis.
-- [ ] Build weekly report generation workflow + UI delivery.
-- [ ] Add repeat/stop/test recommendation output.
+- [x] ✅ Build post autopsy with prediction-vs-actual delta analysis.
+- [x] ✅ Build weekly report generation workflow + UI delivery.
+- [x] ✅ Add repeat/stop/test recommendation output.
 
 ### Phase 6 — Commercial + Operations
-- [ ] Integrate Stripe plans and entitlement gates.
-- [ ] Add usage metering and tier-aware rate/feature limits.
-- [ ] Add monitoring, alerting, and reliability SLO dashboards.
+- [ ] ⚠️ Integrate Stripe plans and entitlement gates (in-progress).
+- [x] ✅ Add usage metering and tier-aware rate/feature limits.
+- [x] ✅ Add monitoring, alerting, and reliability SLO dashboards.
 - [ ] Complete security hardening (encryption, deletion flows, admin constraints).
 
 ---

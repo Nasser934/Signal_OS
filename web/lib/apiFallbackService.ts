@@ -93,15 +93,17 @@ export class ApiFallbackService {
   }
 
   private async mockSource(source: ApiMode, postId: string): Promise<MetricsResult> {
+    const seed = Array.from(postId).reduce((acc, char) => acc + char.charCodeAt(0), 0);
+    const impressions = 800 + (seed % 2500);
     return {
       source,
       capturedAt: new Date().toISOString(),
       metrics: {
-        impressions: 1200,
-        likes: 43,
-        replies: 12,
-        reposts: 5,
-        bookmarks: 7,
+        impressions,
+        likes: Math.floor(impressions * 0.04),
+        replies: Math.floor(impressions * 0.01),
+        reposts: Math.floor(impressions * 0.005),
+        bookmarks: Math.floor(impressions * 0.006),
       },
       fallbackReason: undefined,
     };

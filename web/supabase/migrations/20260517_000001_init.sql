@@ -77,8 +77,8 @@ create table if not exists public.published_posts (
   created_at timestamptz not null default now(),
   unique (user_id, post_url),
   unique (id, user_id),
-  foreign key (draft_id, user_id) references public.drafts(id, user_id) on delete set null (draft_id),
-  foreign key (score_id, user_id) references public.scores(id, user_id) on delete set null (score_id)
+  foreign key (draft_id, user_id) references public.drafts(id, user_id) on delete set null,
+  foreign key (score_id, user_id) references public.scores(id, user_id) on delete set null
 );
 
 -- ----------

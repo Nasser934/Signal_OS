@@ -17,6 +17,11 @@ This document turns the BRD into an implementation tracker, including what is co
 - A starter schema exists in `db/schema.sql`.
 - The repository currently appears documentation-first and does not yet include a complete runnable MVP application stack.
 
+## Immediate Hotfixes Applied (2026-05-17)
+
+- ✅ Fixed Supabase migration SQL for `published_posts` foreign keys by removing invalid `ON DELETE SET NULL (<column>)` syntax and using valid Postgres `ON DELETE SET NULL`.
+- ⬜ Next: run migration apply from a clean database in CI to prevent schema drift and SQL syntax regressions.
+
 ---
 
 ## Functional Requirements Tracker (FR-001 to FR-031)

@@ -11,7 +11,7 @@ export async function GET() {
     const supabase = await createClient();
     const { data, error } = await supabase
       .from('scores')
-      .select('id, created_at, total_score, explanation, components, weaknesses, recommendations, rule_version, drafts!inner(text, topic, audience, tone)')
+      .select('id, created_at, total_score, explanation, components, weaknesses, recommendations, rule_version, prediction_range_low, prediction_range_high, score_confidence, drafts!inner(text, topic, audience, tone)')
       .eq('user_id', user.id)
       .order('created_at', { ascending: false })
       .limit(10);
@@ -35,6 +35,9 @@ export async function GET() {
           components: row.components,
           rewriteRecommendations: row.recommendations,
           rulesVersion: row.rule_version,
+          predictionRangeLow: Number(row.prediction_range_low ?? 0),
+          predictionRangeHigh: Number(row.prediction_range_high ?? 0),
+          scoreConfidence: Number(row.score_confidence ?? 0),
         },
       };
     });
@@ -99,6 +102,9 @@ export async function POST(req: Request) {
         weaknesses: [data.biggestWeakness],
         recommendations: data.rewriteRecommendations,
         rule_version: data.rulesVersion,
+        prediction_range_low: data.predictionRangeLow,
+        prediction_range_high: data.predictionRangeHigh,
+        score_confidence: data.scoreConfidence,
       })
       .select('id')
       .single();

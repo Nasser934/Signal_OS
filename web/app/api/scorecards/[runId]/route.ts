@@ -10,7 +10,7 @@ export async function GET(
     const supabase = await createClient();
     const { data, error } = await supabase
       .from('scores')
-      .select('id, created_at, total_score, explanation, components, recommendations, rule_version, drafts!inner(text, topic, audience, tone)')
+      .select('id, created_at, total_score, explanation, components, weaknesses, recommendations, rule_version, prediction_range_low, prediction_range_high, score_confidence, drafts!inner(text, topic, audience, tone)')
       .eq('id', runId)
       .single();
     if (error || !data) {
@@ -28,10 +28,13 @@ export async function GET(
         totalScore: Number(data.total_score),
         explanation: data.explanation,
         topStrength: '',
-        biggestWeakness: '',
+        biggestWeakness: Array.isArray(data.weaknesses) ? String(data.weaknesses[0] ?? '') : '',
         components: data.components,
         rewriteRecommendations: data.recommendations,
         rulesVersion: data.rule_version,
+        predictionRangeLow: Number(data.prediction_range_low ?? 0),
+        predictionRangeHigh: Number(data.prediction_range_high ?? 0),
+        scoreConfidence: Number(data.score_confidence ?? 0),
       },
     };
     return NextResponse.json({ item });

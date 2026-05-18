@@ -6,6 +6,7 @@ function isProtectedPath(pathname: string): boolean {
   return (
     pathname.startsWith('/api') ||
     pathname.startsWith('/draft') ||
+    pathname.startsWith('/account-import') ||
     pathname.startsWith('/publish') ||
     pathname.startsWith('/command-center') ||
     pathname.startsWith('/reply-assistant') ||

@@ -21,6 +21,9 @@ export interface ScoreOutput {
   components: ScoreComponent[];
   rewriteRecommendations: string[];
   rulesVersion: string;
+  predictionRangeLow: number;
+  predictionRangeHigh: number;
+  scoreConfidence: number;
 }
 
 export class ScoringServiceError extends Error {
@@ -93,7 +96,22 @@ function mapScoreResponse(raw: unknown): ScoreOutput {
     components: (r.components ?? []) as ScoreComponent[],
     rewriteRecommendations: r.rewrite_recommendations,
     rulesVersion: r.rules_version ?? 'unknown',
+    predictionRangeLow: estimatePredictionRange(r.total_score).low,
+    predictionRangeHigh: estimatePredictionRange(r.total_score).high,
+    scoreConfidence: estimateConfidence(r.total_score),
   };
+}
+
+function estimatePredictionRange(score: number) {
+  const midpoint = Math.max(100, Math.round(score * 24));
+  return {
+    low: Math.round(midpoint * 0.72),
+    high: Math.round(midpoint * 1.28),
+  };
+}
+
+function estimateConfidence(score: number) {
+  return Number((0.55 + Math.min(score, 100) / 250).toFixed(3));
 }
 
 async function safeReadDetail(response: Response): Promise<string> {

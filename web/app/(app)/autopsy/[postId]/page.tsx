@@ -1,91 +1,76 @@
 'use client';
 
 import { useParams } from 'next/navigation';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { PageHeader, StatTile } from '@/components/app-ui';
-import type { MetricPoint } from '@/lib/store/localStore';
+
+type Autopsy = {
+  predicted_low: number | null;
+  predicted_high: number | null;
+  actual_impressions: number;
+  delta_vs_midpoint: number;
+  outcome: string;
+  summary: string;
+  lessons: string[];
+  generated_at: string;
+};
 
 export default function AutopsyPage() {
   const params = useParams<{ postId: string }>();
-  const [metrics, setMetrics] = useState<MetricPoint[]>([]);
+  const [autopsy, setAutopsy] = useState<Autopsy | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    async function loadMetrics() {
-      const response = await fetch(`/api/metrics?postId=${params.postId}`);
-      if (!response.ok) return;
-      const body = (await response.json()) as {
-        items?: Array<{
-          post_id: string;
-          captured_at: string;
-          source: MetricPoint['source'];
-          impressions: number;
-          likes: number;
-          replies: number;
-          reposts: number;
-          bookmarks: number;
-        }>;
-      };
-      setMetrics((body.items ?? []).map((item) => ({
-        postId: item.post_id,
-        checkpoint: '10m',
-        capturedAt: item.captured_at,
-        source: item.source,
-        impressions: item.impressions,
-        likes: item.likes,
-        replies: item.replies,
-        reposts: item.reposts,
-        bookmarks: item.bookmarks,
-      })));
+    async function loadAutopsy() {
+      const response = await fetch(`/api/autopsy/${params.postId}`);
+      const body = (await response.json()) as { autopsy?: Autopsy; error?: string };
+      if (!response.ok || !body.autopsy) {
+        setError(body.error ?? 'Unable to generate autopsy');
+        return;
+      }
+      setAutopsy(body.autopsy);
     }
-    void loadMetrics();
+    void loadAutopsy();
   }, [params.postId]);
-
-  const view = useMemo(() => {
-    const latest = metrics[0];
-    const actualImpressions = latest?.impressions ?? 0;
-    const expectedImpressions = 0;
-    const delta = actualImpressions - expectedImpressions;
-    return { actualImpressions, expectedImpressions, delta, latest };
-  }, [metrics]);
 
   return (
     <>
       <PageHeader
         eyebrow="Post autopsy"
-        title="Read the outcome, not just the activity"
-        description="This is where Signal OS should explain the gap between expectation and reality. The current version now uses live stored metrics, with richer prediction comparison still remaining."
+        title="Compare prediction with reality"
+        description="See whether the post beat, missed, or matched its expected range and capture the lesson while the context is still fresh."
       />
 
-      <div className="stat-grid">
-        <StatTile label="Actual impressions" value={view.actualImpressions} note="Latest stored snapshot" />
-        <StatTile label="Expected impressions" value={view.expectedImpressions} note="Prediction model pending" />
-        <StatTile label="Delta" value={view.delta} note="Actual minus expected" />
-        <StatTile label="Snapshots" value={metrics.length} note="Captured points" />
-      </div>
+      {error ? <section className="card">Error: {error}</section> : null}
 
-      <div className="grid-2" style={{ marginTop: '1rem' }}>
-        <section className="card">
-          <h2>What happened</h2>
-          {view.latest ? (
-            <ul className="signal-list">
-              <li>{view.latest.impressions} impressions captured at the latest checkpoint.</li>
-              <li>{view.latest.likes} likes, {view.latest.replies} replies, {view.latest.bookmarks} bookmarks.</li>
-              <li>Source mode: {view.latest.source}.</li>
-            </ul>
-          ) : (
-            <p className="empty-state">No stored metrics yet for this post.</p>
-          )}
-        </section>
+      {autopsy ? (
+        <>
+          <div className="stat-grid">
+            <StatTile label="Expected low" value={autopsy.predicted_low ?? 'n/a'} note="Prediction range" />
+            <StatTile label="Expected high" value={autopsy.predicted_high ?? 'n/a'} note="Prediction range" />
+            <StatTile label="Actual reach" value={autopsy.actual_impressions} note="Latest snapshot" />
+            <StatTile label="Delta" value={autopsy.delta_vs_midpoint} note="Vs midpoint" />
+          </div>
 
+          <div className="grid-2" style={{ marginTop: '1rem' }}>
+            <section className="card">
+              <p className="eyebrow">{autopsy.outcome.replace('_', ' ')}</p>
+              <h2>{autopsy.summary}</h2>
+              <p className="muted">Generated {new Date(autopsy.generated_at).toLocaleString()}</p>
+            </section>
+            <section className="card">
+              <h2>Lessons</h2>
+              <ul className="signal-list">
+                {autopsy.lessons.map((lesson) => <li key={lesson}>{lesson}</li>)}
+              </ul>
+            </section>
+          </div>
+        </>
+      ) : (
         <section className="card">
-          <h2>What is still missing</h2>
-          <ul className="signal-list">
-            <li>Prediction-vs-actual comparison tied to the scored draft.</li>
-            <li>Reason codes for overperformance and underperformance.</li>
-            <li>Account-specific lessons learned from this result.</li>
-          </ul>
+          <p className="empty-state">Building autopsy...</p>
         </section>
-      </div>
+      )}
     </>
   );
 }

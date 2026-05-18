@@ -112,6 +112,8 @@ export function DraftScorer() {
                 <ul className="signal-list">
                   <li><strong>Top strength:</strong> {result.topStrength || 'No clear strength yet.'}</li>
                   <li><strong>Biggest weakness:</strong> {result.biggestWeakness || 'No clear weakness detected.'}</li>
+                  <li><strong>Expected reach:</strong> {result.predictionRangeLow}-{result.predictionRangeHigh} impressions</li>
+                  <li><strong>Confidence:</strong> {(result.scoreConfidence * 100).toFixed(1)}%</li>
                 </ul>
               </>
             ) : (

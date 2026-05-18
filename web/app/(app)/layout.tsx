@@ -9,6 +9,7 @@ export default function AppLayout({ children }: { children: ReactNode }) {
         <p className="side-kicker">Attention intelligence</p>
         <nav className="side-links" aria-label="Primary">
           <Link href="/draft">Draft Studio</Link>
+          <Link href="/account-import">Account Import</Link>
           <Link href="/publish">Publish</Link>
           <Link href="/reply-assistant">Reply Queue</Link>
           <Link href="/weekly-report">Weekly Review</Link>

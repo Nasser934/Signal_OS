@@ -20,9 +20,9 @@ export default function ApiModePage() {
     <>
       <h1>API Mode</h1>
       <section className="card">
-        <label><input type="radio" checked={mode === 'full_api'} onChange={() => onChange('full_api')} /> Full API Mode</label>
-        <label><input type="radio" checked={mode === 'byo_api_key'} onChange={() => onChange('byo_api_key')} /> BYO API Key</label>
-        <label><input type="radio" checked={mode === 'manual'} onChange={() => onChange('manual')} /> Manual Mode</label>
+        <label><input type="radio" name="api-mode" checked={mode === 'full_api'} onChange={() => onChange('full_api')} /> Full API Mode</label>
+        <label><input type="radio" name="api-mode" checked={mode === 'byo_api_key'} onChange={() => onChange('byo_api_key')} /> BYO API Key</label>
+        <label><input type="radio" name="api-mode" checked={mode === 'manual'} onChange={() => onChange('manual')} /> Manual Mode</label>
       </section>
     </>
   );

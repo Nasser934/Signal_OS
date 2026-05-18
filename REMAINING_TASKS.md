@@ -1,135 +1,113 @@
-# Signal OS — Remaining Tasks, Activities, and Features
+# Signal OS - Remaining Tasks, Activities, and Features
 
-This document turns the BRD into an implementation tracker, including what is complete, what remains, and the recommended build order.
+This tracker reflects the repo as of 2026-05-18 after Supabase integration and the first major UX pass.
 
 ## Status Legend
 
-- `⬜ Not started`
-- `🟨 In progress`
-- `✅ Done`
-- Priority tags: `P0` (MVP critical), `P1` (important but not blocking MVP completion)
+- `[ ]` Not done
+- `[~]` Partial
+- `[x]` Done
+- Priorities use `P0` for MVP-critical work and `P1` for important follow-up work.
 
-## Current Repository State (as of 2026-05-16)
+## Current State
 
-- Product requirements exist in `BRD.md`.
-- Product summary exists in `README.md`.
-- Target UI/system layout exists in `web/ARCHITECTURE.md`.
-- A starter schema exists in `db/schema.sql`.
-- The repository currently appears documentation-first and does not yet include a complete runnable MVP application stack.
+- The app now has a runnable Next.js frontend, Supabase auth, hosted persistence for core draft/publish/report flows, a scoring service, and a stronger product shell.
+- The product is not commercially complete yet. The largest gaps are account import/baseline, real prediction metadata, complete data-mode behavior, billing completion, and deeper learning surfaces.
 
----
+## Functional Requirements
 
-## Functional Requirements Tracker (FR-001 to FR-031)
+### Draft Score
 
-### 1) Draft Score
-- [x] ✅ `FR-001` (P0): User can paste a draft post.
-- [x] ✅ `FR-002` (P0): System generates an attention score.
-- [x] ✅ `FR-003` (P0): System explains the score.
-- [ ] ⬜ `FR-004` (P0): System identifies strongest weakness.
-- [x] ✅ `FR-005` (P0): System provides 3 rewrite options.
-- [x] ✅ `FR-006` (P1): User can save draft versions.
-- [x] ✅ `FR-007` (P0): User can generate a shareable scorecard.
-- [ ] ⬜ `FR-008` (P0): System stores prediction metadata.
+- [x] `FR-001` P0: User can paste a draft post.
+- [x] `FR-002` P0: System generates an attention score.
+- [x] `FR-003` P0: System explains the score.
+- [x] `FR-004` P0: System identifies strongest weakness.
+- [x] `FR-005` P0: System provides rewrite options.
+- [x] `FR-006` P1: User can save draft versions.
+- [x] `FR-007` P0: User can generate a shareable scorecard.
+- [ ] `FR-008` P0: System stores full prediction metadata.
 
-### 2) Account Import
-- [ ] ⬜ `FR-009` (P0): Connect X account via API.
-- [ ] ⬜ `FR-010` (P0): Support BYO API key.
-- [ ] ⬜ `FR-011` (P0): Support manual post data import.
-- [ ] ⬜ `FR-012` (P0): System creates account baseline.
-- [ ] ⬜ `FR-013` (P0): System identifies best historical posts.
-- [ ] ⬜ `FR-014` (P1): System identifies weak historical posts.
-- [ ] ⬜ `FR-015` (P1): Recommend account-specific posting windows.
+### Account Import
 
-### 3) Publish Tracking
-- [x] ✅ `FR-016` (P0): Mark draft as published.
-- [x] ✅ `FR-017` (P0): Add published post URL.
-- [x] ✅ `FR-018` (P0): Track first-hour metrics where API access exists.
-- [x] ✅ `FR-019` (P0): Allow manual metrics entry.
-- [x] ✅ `FR-020` (P0): Compare predicted vs actual outcomes.
-- [x] ✅ `FR-021` (P0): Generate post autopsy.
+- [ ] `FR-009` P0: Connect X account via API.
+- [ ] `FR-010` P0: Support BYO API key end to end.
+- [ ] `FR-011` P0: Support manual post-data import.
+- [ ] `FR-012` P0: Create account baseline.
+- [ ] `FR-013` P0: Identify best historical posts.
+- [ ] `FR-014` P1: Identify weak historical posts.
+- [ ] `FR-015` P1: Recommend account-specific posting windows.
 
-### 4) Reply Assistant
-- [x] ✅ `FR-022` (P0): Rank replies by response value.
-- [x] ✅ `FR-023` (P0): Suggest response drafts.
-- [x] ✅ `FR-024` (P0): Require human approval for every suggested reply.
-- [x] ✅ `FR-025` (P1): Flag potential negative threads.
-- [x] ✅ `FR-026` (P1): Recommend response timing.
+### Publish Tracking
 
-### 5) Weekly Report
-- [x] ✅ `FR-027` (P0): Generate weekly report.
-- [x] ✅ `FR-028` (P0): Include best/worst posts.
-- [x] ✅ `FR-029` (P0): Include topic-level insights.
-- [x] ✅ `FR-030` (P0): Include prediction accuracy.
-- [x] ✅ `FR-031` (P0): Recommend next-week actions.
+- [x] `FR-016` P0: Mark a draft as published.
+- [x] `FR-017` P0: Add published post URL.
+- [~] `FR-018` P0: Track first-hour metrics where API access exists.
+- [~] `FR-019` P0: Allow manual metrics entry.
+- [ ] `FR-020` P0: Compare predicted vs actual outcomes.
+- [ ] `FR-021` P0: Generate a real post autopsy.
 
----
+### Reply Assistant
 
-## Remaining Implementation Activities
+- [x] `FR-022` P0: Rank replies by response value.
+- [x] `FR-023` P0: Suggest response drafts.
+- [x] `FR-024` P0: Require human approval for every suggested reply.
+- [x] `FR-025` P1: Flag potential negative threads.
+- [x] `FR-026` P1: Recommend response timing.
 
-### Phase 1 — Foundation (Critical)
-- [x] ✅ Scaffold Next.js application in `web/` using architecture route groups.
-- [ ] Configure Supabase Auth + Postgres + baseline RLS policies.
-- [x] ✅ Convert `db/schema.sql` into migration-managed schema.
-- [x] ✅ Add `.env.example` and runtime configuration validation.
-- [x] ✅ Add structured logging, error taxonomy, and audit logging hooks.
+### Weekly Report
 
-### Phase 2 — Draft Score MVP (Core Loop Entry)
-- [x] ✅ Build `/draft` experience (input, score, diagnosis, rewrites).
-- [x] ✅ Implement scoring service interface (initial rules engine).
-- [x] ✅ Persist draft, score, rewrite, and prediction metadata records.
-- [x] ✅ Build shareable scorecard generation and read-only view.
+- [x] `FR-027` P0: Generate weekly report.
+- [x] `FR-028` P0: Include best and worst posts.
+- [x] `FR-029` P0: Include topic-level insights.
+- [ ] `FR-030` P0: Include real prediction accuracy.
+- [x] `FR-031` P0: Recommend next-week actions.
 
-### Phase 3 — Publish + Track
-- [x] ✅ Implement publish workflow (mark published + URL capture).
-- [x] ✅ Add 10m/30m/60m/24h/7d metrics checkpoint tracking.
-- [x] ✅ Implement mode switching: Full API / BYO Key / Manual.
-- [x] ✅ Build command-center UI modules for momentum and next actions.
+## Remaining Build Work
 
-### Phase 4 — Reply Assistant + Safety
-- [x] ✅ Implement reply queue scoring/ranking.
-- [x] ✅ Generate suggested responses with explicit approval gates.
-- [x] ✅ Add negative-thread risk alerts and timing recommendations.
+### Foundation
 
-### Phase 5 — Learning Loop
-- [x] ✅ Build post autopsy with prediction-vs-actual delta analysis.
-- [x] ✅ Build weekly report generation workflow + UI delivery.
-- [x] ✅ Add repeat/stop/test recommendation output.
+- [x] Configure Supabase Auth, Postgres, and baseline RLS.
+- [x] Move core app data from local storage into Supabase-backed routes.
+- [ ] Complete sensitive-data hardening: credential encryption, disconnect, deletion, admin constraints.
 
-### Phase 6 — Commercial + Operations
-- [ ] ⚠️ Integrate Stripe plans and entitlement gates (in-progress).
-- [x] ✅ Add usage metering and tier-aware rate/feature limits.
-- [x] ✅ Add monitoring, alerting, and reliability SLO dashboards.
-- [ ] Complete security hardening (encryption, deletion flows, admin constraints).
+### Core Product
 
----
+- [ ] Build account import and baseline generation.
+- [ ] Persist prediction ranges, confidence, and prediction context on scores.
+- [ ] Finish manual metric entry and true 10m / 30m / 60m / 24h / 7d checkpoint behavior.
+- [ ] Complete Full API / BYO API / Manual mode behavior end to end.
+- [ ] Build prediction-vs-actual comparison and a real post autopsy.
+- [ ] Improve weekly learning with account-specific insights.
 
-## Recommended Next 10 Build Tasks (Ordered)
+### Commercialization
 
-1. Scaffold the Next.js app in `web/`.
-2. Wire Supabase client, auth, and session guards.
-3. Implement migrations from `db/schema.sql`.
-4. Build `/draft` page with draft persistence.
-5. Add scoring endpoint contract + explainability payload.
-6. Render score breakdown + top weakness + 3 rewrites.
-7. Implement “mark published” + post URL capture.
-8. Add manual metrics input + first-hour timeline.
-9. Persist prediction-vs-actual and add autopsy skeleton UI.
-10. Add weekly report job stub and report page shell.
+- [~] Integrate Stripe plans and entitlement gates.
+- [ ] Add checkout completion, webhooks, subscription state sync, and upgrade/downgrade handling.
+- [ ] Add onboarding that gets a new user to first value quickly.
 
----
+### Quality
 
-## Definition of MVP Complete
+- [ ] Add end-to-end tests for sign-in, scoring, publish, tracking, reply approval, and reports.
+- [ ] Add richer empty states, loading states, and error recovery across the product.
+- [ ] Add product analytics for activation, retention, and paywall conversion.
 
-MVP is complete when all conditions below are true:
+## Next 10 Tasks
 
-- [ ] All P0 FRs are delivered and testable end-to-end.
-- [ ] Core loop works in product flow: **Score → Improve → Publish → Track → Learn**.
-- [ ] Fallback modes are usable: Full API, BYO API key, and Manual mode.
-- [ ] “Paid gets action” gating is enforced for action surfaces.
-- [ ] Every reply action requires explicit human approval.
+1. Build account import and baseline generation.
+2. Persist full prediction metadata and confidence fields.
+3. Implement true metric checkpoint capture and manual entry.
+4. Build prediction-vs-actual comparison.
+5. Turn post autopsy into a real learning surface.
+6. Finish Full API / BYO API / Manual behavior.
+7. Complete Stripe subscription lifecycle.
+8. Add onboarding and activation flow.
+9. Add security deletion and credential-management flows.
+10. Add end-to-end coverage for the full core loop.
 
-## Suggested Review Cadence
+## MVP Complete When
 
-- Weekly: update FR status checkboxes and phase activity status.
-- End of sprint: re-prioritize “Next 10 Build Tasks” based on blockers and learning.
-- Monthly: confirm scope alignment against BRD product rules to prevent feature creep.
+- [ ] Every P0 requirement is testable end to end.
+- [ ] The full loop works: Score -> Improve -> Publish -> Track -> Learn.
+- [ ] Full API, BYO API, and Manual modes are all usable.
+- [ ] Paid action surfaces are entitlement-gated.
+- [ ] Every suggested reply still requires explicit human approval.

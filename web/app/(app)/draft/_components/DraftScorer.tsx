@@ -54,8 +54,7 @@ export function DraftScorer() {
         tone,
         score: body.data,
       };
-      const nextHistory = [entry, ...history].slice(0, 10);
-      setHistory(nextHistory);
+      setHistory((prev) => [entry, ...prev].slice(0, 10));
     } catch (err) {
       setError(err instanceof Error ? err.message : String(err));
     } finally {
@@ -65,66 +64,115 @@ export function DraftScorer() {
 
   return (
     <>
-      <section className="card">
-        <label htmlFor="draft-text">Draft text</label>
-        <textarea
-          id="draft-text"
-          rows={6}
-          value={text}
-          onChange={(e) => setText(e.target.value)}
-        />
+      <div className="grid-2">
+        <section className="card">
+          <label htmlFor="draft-text">Draft text</label>
+          <textarea
+            id="draft-text"
+            rows={10}
+            value={text}
+            onChange={(event) => setText(event.target.value)}
+            placeholder="Write the post you are thinking about publishing..."
+          />
 
-        <label htmlFor="draft-topic">Topic</label>
-        <input id="draft-topic" value={topic} onChange={(e) => setTopic(e.target.value)} />
+          <div className="form-grid">
+            <div>
+              <label htmlFor="draft-topic">Topic</label>
+              <input id="draft-topic" value={topic} onChange={(event) => setTopic(event.target.value)} />
+            </div>
+            <div>
+              <label htmlFor="draft-audience">Audience</label>
+              <input id="draft-audience" value={audience} onChange={(event) => setAudience(event.target.value)} />
+            </div>
+            <div>
+              <label htmlFor="draft-tone">Tone</label>
+              <input id="draft-tone" value={tone} onChange={(event) => setTone(event.target.value)} />
+            </div>
+          </div>
 
-        <label htmlFor="draft-audience">Audience</label>
-        <input
-          id="draft-audience"
-          value={audience}
-          onChange={(e) => setAudience(e.target.value)}
-        />
+          <div className="inline-actions">
+            <button onClick={onScore} disabled={!canScore}>
+              {loading ? 'Scoring...' : 'Score draft'}
+            </button>
+            {runId ? <Link className="button-link secondary" href={`/scorecard/${runId}`}>Share scorecard</Link> : null}
+          </div>
+        </section>
 
-        <label htmlFor="draft-tone">Tone</label>
-        <input id="draft-tone" value={tone} onChange={(e) => setTone(e.target.value)} />
+        <div className="stack">
+          <section className="card">
+            {result ? (
+              <>
+                <div className="split-row">
+                  <div>
+                    <p className="eyebrow">Current read</p>
+                    <h2>{result.explanation}</h2>
+                  </div>
+                  <div className="score-badge">{result.totalScore}</div>
+                </div>
+                <ul className="signal-list">
+                  <li><strong>Top strength:</strong> {result.topStrength || 'No clear strength yet.'}</li>
+                  <li><strong>Biggest weakness:</strong> {result.biggestWeakness || 'No clear weakness detected.'}</li>
+                </ul>
+              </>
+            ) : (
+              <>
+                <p className="eyebrow">What you will get</p>
+                <h2>A fast publishing decision</h2>
+                <p className="empty-state">Score the draft to see its strongest signal, weakest point, and the fixes most likely to improve performance.</p>
+              </>
+            )}
+          </section>
 
-        <button onClick={onScore} disabled={!canScore}>
-          {loading ? 'Scoring…' : 'Score draft'}
-        </button>
-      </section>
+          <section className="card">
+            <h3>Recent versions</h3>
+            {history.length ? (
+              <ul className="timeline">
+                {history.map((item) => (
+                  <li key={item.id}>
+                    <Link href={`/scorecard/${item.id}`}>
+                      {item.score.totalScore}/100 - {new Date(item.createdAt).toLocaleString()}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p className="empty-state">Saved versions appear here after your first score.</p>
+            )}
+          </section>
+        </div>
+      </div>
 
       {error ? <section className="card">Error: {error}</section> : null}
 
       {result ? (
-        <section className="card">
-          <h2>{result.totalScore}/100</h2>
-          <p>{result.explanation}</p>
-          <p><strong>Biggest weakness:</strong> {result.biggestWeakness}</p>
-          <h3>Components</h3>
-          <ul>
-            {result.components.map((c) => (
-              <li key={c.name}>{c.name}: {c.score} — {c.rationale}</li>
+        <div className="grid-2">
+          <section className="card">
+            <h2>Score breakdown</h2>
+            {result.components.map((component) => (
+              <div className="component-row" key={component.name}>
+                <div className="split-row">
+                  <strong>{component.name}</strong>
+                  <span>{component.score}/100</span>
+                </div>
+                <div className="meter"><span style={{ width: `${component.score}%` }} /></div>
+                <small className="muted">{component.rationale}</small>
+              </div>
             ))}
-          </ul>
-          <h3>Rewrites</h3>
-          <ul>
-            {result.rewriteRecommendations.map((r) => <li key={r}>{r}</li>)}
-          </ul>
-          {runId ? <p><Link href={`/scorecard/${runId}`}>Open shareable scorecard</Link></p> : null}
-        </section>
-      ) : null}
+          </section>
 
-      <section className="card">
-        <h3>Recent draft versions</h3>
-        <ul>
-          {history.map((h) => (
-            <li key={h.id}>
-              <Link href={`/scorecard/${h.id}`}>
-                {new Date(h.createdAt).toLocaleString()} — {h.score.totalScore}/100
-              </Link>
-            </li>
-          ))}
-        </ul>
-      </section>
+          <section className="card">
+            <h2>Rewrite priorities</h2>
+            <ul className="signal-list">
+              {result.rewriteRecommendations.map((recommendation) => (
+                <li key={recommendation}>{recommendation}</li>
+              ))}
+            </ul>
+            <div className="inline-actions" style={{ marginTop: '1rem' }}>
+              <Link className="button-link" href="/publish">Continue to publish</Link>
+            </div>
+          </section>
+        </div>
+      ) : null}
     </>
   );
 }

@@ -11,7 +11,7 @@ export async function GET() {
     const supabase = await createClient();
     const { data, error } = await supabase
       .from('scores')
-      .select('id, created_at, total_score, explanation, components, recommendations, rule_version, drafts!inner(text, topic, audience, tone)')
+      .select('id, created_at, total_score, explanation, components, weaknesses, recommendations, rule_version, drafts!inner(text, topic, audience, tone)')
       .eq('user_id', user.id)
       .order('created_at', { ascending: false })
       .limit(10);
@@ -31,7 +31,7 @@ export async function GET() {
           totalScore: Number(row.total_score),
           explanation: row.explanation,
           topStrength: '',
-          biggestWeakness: '',
+          biggestWeakness: Array.isArray(row.weaknesses) ? String(row.weaknesses[0] ?? '') : '',
           components: row.components,
           rewriteRecommendations: row.recommendations,
           rulesVersion: row.rule_version,

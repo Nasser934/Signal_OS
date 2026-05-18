@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { LoopRail, PageHeader, StatTile } from '@/components/app-ui';
 
 type Report = {
   generatedAt: string;
@@ -9,6 +10,8 @@ type Report = {
   nextWeekActions: string[];
   averageScore: number;
   averageImpressions: number;
+  bestPost?: { score: number; impressions: number; topic: string };
+  worstPost?: { score: number; impressions: number; topic: string };
 };
 
 export default function WeeklyReportPage() {
@@ -43,21 +46,53 @@ export default function WeeklyReportPage() {
 
   return (
     <>
-      <h1>Weekly Report</h1>
+      <PageHeader
+        eyebrow="Weekly review"
+        title="Turn tracked posts into next-week decisions"
+        description="Close the loop by seeing what worked, what missed, and which behaviors deserve another week of attention."
+      />
+      <LoopRail active="Learn" />
+
       <section className="card">
-        <button onClick={generate}>Generate report</button>
-        {error ? <p style={{ color: 'red' }}>Error: {error}</p> : null}
+        <div className="inline-actions">
+          <button onClick={generate}>Generate report</button>
+        </div>
+        {error ? <p style={{ color: 'var(--danger)', marginTop: '1rem' }}>Error: {error}</p> : null}
       </section>
+
       {report ? (
+        <>
+          <div className="stat-grid">
+            <StatTile label="Average score" value={report.averageScore} note="Predicted quality" />
+            <StatTile label="Average impressions" value={report.averageImpressions} note="Observed reach" />
+            <StatTile label="Best topic" value={report.bestPost?.topic ?? 'n/a'} note="Highest reach" />
+            <StatTile label="Generated" value={new Date(report.generatedAt).toLocaleDateString()} note="Latest review" />
+          </div>
+
+          <div className="grid-2" style={{ marginTop: '1rem' }}>
+            <section className="card">
+              <h2>What the week says</h2>
+              <ul className="signal-list">
+                <li>{report.topicInsights}</li>
+                <li>{report.predictionAccuracy}</li>
+                <li>Best post: {report.bestPost?.topic ?? 'n/a'} with {report.bestPost?.impressions ?? 0} impressions.</li>
+                <li>Weakest post: {report.worstPost?.topic ?? 'n/a'} with {report.worstPost?.impressions ?? 0} impressions.</li>
+              </ul>
+            </section>
+
+            <section className="card">
+              <h2>Next-week actions</h2>
+              <ul className="signal-list">
+                {report.nextWeekActions.map((action) => <li key={action}>{action}</li>)}
+              </ul>
+            </section>
+          </div>
+        </>
+      ) : (
         <section className="card">
-          <p>{report.averageScore}</p>
-          <ul>
-            {report.nextWeekActions.map((a) => (
-              <li key={a}>{a}</li>
-            ))}
-          </ul>
+          <p className="empty-state">Generate a report after you have tracked a few live posts.</p>
         </section>
-      ) : null}
+      )}
     </>
   );
 }

@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { PageHeader } from '@/components/app-ui';
 
 type ReplyItem = {
   id: string;
@@ -22,12 +23,8 @@ export default function ReplyAssistantPage() {
   async function rankReplies() {
     const replies = rawReplies
       .split('\n')
-      .map((text, index) => ({
-        id: `r${index + 1}`,
-        text: text.trim(),
-        likes: 0,
-      }))
-      .filter((r) => r.text.length > 0);
+      .map((text, index) => ({ id: `r${index + 1}`, text: text.trim(), likes: 0 }))
+      .filter((reply) => reply.text.length > 0);
 
     try {
       const res = await fetch('/api/replies/suggest', {
@@ -73,9 +70,7 @@ export default function ReplyAssistantPage() {
         setAudit((prev) => [`Error: ${errorMsg}`, ...prev]);
         return;
       }
-      const body = (await res.json()) as {
-        action?: { approvalStatus: string; replyId: string };
-      };
+      const body = (await res.json()) as { action?: { approvalStatus: string; replyId: string } };
       if (body.action) {
         const action = body.action;
         setAudit((prev) => [`${action.replyId}: ${action.approvalStatus}`, ...prev]);
@@ -87,38 +82,59 @@ export default function ReplyAssistantPage() {
 
   return (
     <>
-      <h1>Reply Assistant</h1>
-      <section className="card">
-        <label htmlFor="reply-input">Replies (one per line)</label>
-        <textarea
-          id="reply-input"
-          rows={5}
-          value={rawReplies}
-          onChange={(e) => setRawReplies(e.target.value)}
-        />
-        <button onClick={rankReplies}>Rank reply queue</button>
-      </section>
-      {items.map((item) => (
-        <section className="card" key={item.id}>
-          <p>{item.text}</p>
-          <p>
-            {item.responseValue} | {item.riskLevel} | {item.recommendedDelayMinutes}m
-          </p>
-          <p>{item.suggestedResponse}</p>
-          <button onClick={() => approve(item.id, item.suggestedResponse, true)}>
-            Approve
-          </button>
-          <button onClick={() => approve(item.id, item.suggestedResponse, false)}>
-            Reject
-          </button>
+      <PageHeader
+        eyebrow="Reply assistant"
+        title="Prioritize the replies worth your time"
+        description="Rank incoming replies, separate opportunity from risk, and keep every outbound response under human approval."
+      />
+
+      <div className="grid-2">
+        <section className="card">
+          <label htmlFor="reply-input">Replies, one per line</label>
+          <textarea id="reply-input" rows={8} value={rawReplies} onChange={(event) => setRawReplies(event.target.value)} />
+          <button onClick={rankReplies}>Rank reply queue</button>
         </section>
-      ))}
+
+        <section className="card">
+          <p className="eyebrow">Queue logic</p>
+          <h2>Respond where value is highest</h2>
+          <ul className="signal-list">
+            <li>High-value replies rise to the top.</li>
+            <li>Risky threads stay visible instead of hiding in the noise.</li>
+            <li>Every suggestion remains approval-gated.</li>
+          </ul>
+        </section>
+      </div>
+
+      <div className="stack">
+        {items.map((item) => (
+          <section className="card" key={item.id}>
+            <div className="split-row">
+              <strong>{item.text}</strong>
+              <span className={`pill ${item.riskLevel === 'high' ? 'danger' : 'success'}`}>{item.riskLevel} risk</span>
+            </div>
+            <div className="stat-grid" style={{ marginTop: '.75rem' }}>
+              <div className="stat-tile"><span>Response value</span><strong>{item.responseValue}</strong></div>
+              <div className="stat-tile"><span>Suggested delay</span><strong>{item.recommendedDelayMinutes}m</strong></div>
+            </div>
+            <p style={{ marginTop: '1rem' }}>{item.suggestedResponse}</p>
+            <div className="inline-actions">
+              <button onClick={() => approve(item.id, item.suggestedResponse, true)}>Approve</button>
+              <button className="button-link secondary" onClick={() => approve(item.id, item.suggestedResponse, false)}>Reject</button>
+            </div>
+          </section>
+        ))}
+      </div>
+
       <section className="card">
-        <ul>
-          {audit.map((a) => (
-            <li key={a}>{a}</li>
-          ))}
-        </ul>
+        <h2>Approval log</h2>
+        {audit.length ? (
+          <ul className="timeline">
+            {audit.map((entry) => <li key={entry}>{entry}</li>)}
+          </ul>
+        ) : (
+          <p className="empty-state">Actions will appear here after you approve or reject suggested replies.</p>
+        )}
       </section>
     </>
   );

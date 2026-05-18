@@ -3,16 +3,10 @@
 
 create extension if not exists pgcrypto;
 
--- ----------
--- Enums
--- ----------
 create type api_mode as enum ('full_api', 'byo_api_key', 'manual');
 create type metric_source as enum ('full_api', 'byo_api_key', 'manual');
 create type score_status as enum ('draft', 'scored', 'published', 'archived');
 
--- ----------
--- Users (1:1 with auth.users)
--- ----------
 create table if not exists public.users (
   id uuid primary key references auth.users(id) on delete cascade,
   email text unique,
@@ -22,9 +16,6 @@ create table if not exists public.users (
   updated_at timestamptz not null default now()
 );
 
--- ----------
--- Drafts
--- ----------
 create table if not exists public.drafts (
   id uuid primary key default gen_random_uuid(),
   user_id uuid not null references public.users(id) on delete cascade,
@@ -39,9 +30,6 @@ create table if not exists public.drafts (
   unique (id, user_id)
 );
 
--- ----------
--- Scores (explainable, versioned)
--- ----------
 create table if not exists public.scores (
   id uuid primary key default gen_random_uuid(),
   draft_id uuid not null,
@@ -61,9 +49,6 @@ create table if not exists public.scores (
   foreign key (draft_id, user_id) references public.drafts(id, user_id) on delete cascade
 );
 
--- ----------
--- Published posts
--- ----------
 create table if not exists public.published_posts (
   id uuid primary key default gen_random_uuid(),
   user_id uuid not null references public.users(id) on delete cascade,
@@ -77,13 +62,10 @@ create table if not exists public.published_posts (
   created_at timestamptz not null default now(),
   unique (user_id, post_url),
   unique (id, user_id),
-  foreign key (draft_id, user_id) references public.drafts(id, user_id) on delete set null (draft_id),
-  foreign key (score_id, user_id) references public.scores(id, user_id) on delete set null (score_id)
+  foreign key (draft_id, user_id) references public.drafts(id, user_id) on delete set null,
+  foreign key (score_id, user_id) references public.scores(id, user_id) on delete set null
 );
 
--- ----------
--- Post metrics (time-series snapshots)
--- ----------
 create table if not exists public.post_metrics (
   id bigserial primary key,
   post_id uuid not null,
@@ -116,9 +98,6 @@ create table if not exists public.post_metrics (
   foreign key (post_id, user_id) references public.published_posts(id, user_id) on delete cascade
 );
 
--- ----------
--- BYO API credentials (encrypted material only)
--- ----------
 create table if not exists public.api_credentials (
   id uuid primary key default gen_random_uuid(),
   user_id uuid not null references public.users(id) on delete cascade,
@@ -135,14 +114,11 @@ create table if not exists public.api_credentials (
   unique(user_id, provider, key_fingerprint)
 );
 
--- ----------
--- Human approval queue (for post-publish actions)
--- ----------
 create table if not exists public.approval_actions (
   id uuid primary key default gen_random_uuid(),
   user_id uuid not null references public.users(id) on delete cascade,
   post_id uuid,
-  action_type text not null, -- reply_suggestion, timing_recommendation, risk_flag
+  action_type text not null,
   payload jsonb not null,
   approval_status text not null default 'pending' check (approval_status in ('pending','approved','rejected')),
   approved_at timestamptz,
@@ -150,9 +126,6 @@ create table if not exists public.approval_actions (
   foreign key (post_id, user_id) references public.published_posts(id, user_id) on delete cascade
 );
 
--- ----------
--- Indexes
--- ----------
 create index if not exists idx_drafts_user_created on public.drafts(user_id, created_at desc);
 create index if not exists idx_scores_user_created on public.scores(user_id, created_at desc);
 create index if not exists idx_scores_draft on public.scores(draft_id);
@@ -162,9 +135,6 @@ create index if not exists idx_post_metrics_user_captured on public.post_metrics
 create index if not exists idx_api_credentials_user_active on public.api_credentials(user_id, is_active);
 create index if not exists idx_approval_actions_user_status on public.approval_actions(user_id, approval_status, created_at desc);
 
--- ----------
--- RLS
--- ----------
 alter table public.users enable row level security;
 alter table public.drafts enable row level security;
 alter table public.scores enable row level security;

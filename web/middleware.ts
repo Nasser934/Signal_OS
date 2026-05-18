@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
+import { updateSession } from '@/lib/supabase/middleware';
 
 function isProtectedPath(pathname: string): boolean {
   return (
@@ -15,12 +16,14 @@ function isProtectedPath(pathname: string): boolean {
 }
 
 export function middleware(req: NextRequest) {
+  const refreshedResponse = updateSession(req);
+
   if (!isProtectedPath(req.nextUrl.pathname)) {
-    return NextResponse.next();
+    return refreshedResponse;
   }
 
   if (process.env.APP_MODE !== 'production') {
-    return NextResponse.next();
+    return refreshedResponse;
   }
 
   const sessionToken =
@@ -36,7 +39,7 @@ export function middleware(req: NextRequest) {
     return NextResponse.redirect(new URL('/login', req.url));
   }
 
-  return NextResponse.next();
+  return refreshedResponse;
 }
 
 export const config = {

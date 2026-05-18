@@ -19,7 +19,7 @@ This document turns the BRD into an implementation tracker, including what is co
 
 ## Immediate Hotfixes Applied (2026-05-17)
 
-- ✅ Fixed Supabase migration SQL for `published_posts` foreign keys by removing invalid `ON DELETE SET NULL (<column>)` syntax and using valid Postgres `ON DELETE SET NULL`.
+- ✅ Corrected Supabase migration SQL for `published_posts` composite foreign keys to use column-targeted `ON DELETE SET NULL` actions (`SET NULL (draft_id)` / `SET NULL (score_id)`), preserving required `user_id` values while clearing optional references.
 - ✅ Added CI schema smoke test workflow (`.github/workflows/schema-smoke-test.yml`) plus `scripts/verify_schema.sh` to apply the migration against a clean Postgres instance and catch SQL regressions early.
 
 ---

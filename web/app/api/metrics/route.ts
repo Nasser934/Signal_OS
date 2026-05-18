@@ -3,6 +3,7 @@ import { ApiFallbackService } from '@/lib/apiFallbackService';
 import { AppError } from '@/lib/observability/logger';
 import { getRequestUser } from '@/lib/server/auth';
 import { assertEntitled } from '@/lib/server/entitlements';
+import { createClient } from '@/lib/supabase/server';
 
 const service = new ApiFallbackService();
 
@@ -43,6 +44,20 @@ export async function POST(req: Request) {
       { postId: payload.postId }
     );
 
+    const supabase = await createClient();
+    const { error } = await supabase.from('post_metrics').insert({
+      post_id: payload.postId,
+      user_id: user.id,
+      source: result.source,
+      captured_at: result.capturedAt,
+      impressions: result.metrics.impressions ?? 0,
+      likes: result.metrics.likes ?? 0,
+      replies: result.metrics.replies ?? 0,
+      reposts: result.metrics.reposts ?? 0,
+      bookmarks: result.metrics.bookmarks ?? 0,
+    });
+    if (error) throw error;
+
     return NextResponse.json({ result });
   } catch (error) {
     if (error instanceof AppError) {
@@ -52,5 +67,30 @@ export async function POST(req: Request) {
       { error: error instanceof Error ? error.message : 'Unexpected metrics error' },
       { status: 500 }
     );
+  }
+}
+
+export async function GET(req: Request) {
+  try {
+    const user = await getRequestUser(req);
+    const url = new URL(req.url);
+    const postId = url.searchParams.get('postId');
+    if (!postId) return NextResponse.json({ error: 'postId is required' }, { status: 400 });
+
+    const supabase = await createClient();
+    const { data, error } = await supabase
+      .from('post_metrics')
+      .select('post_id, captured_at, source, impressions, likes, replies, reposts, bookmarks')
+      .eq('user_id', user.id)
+      .eq('post_id', postId)
+      .order('captured_at', { ascending: false });
+    if (error) throw error;
+
+    return NextResponse.json({ items: data ?? [] });
+  } catch (error) {
+    if (error instanceof AppError) {
+      return NextResponse.json({ error: error.message, code: error.code }, { status: error.status });
+    }
+    return NextResponse.json({ error: error instanceof Error ? error.message : 'Failed to load metrics' }, { status: 500 });
   }
 }

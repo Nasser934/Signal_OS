@@ -2,13 +2,7 @@
 
 import { useParams } from 'next/navigation';
 import { useEffect, useMemo, useState } from 'react';
-import {
-  STORE_KEYS,
-  readJson,
-  writeJson,
-  type ApiMode,
-  type MetricPoint,
-} from '@/lib/store/localStore';
+import type { ApiMode, MetricPoint } from '@/lib/store/localStore';
 
 const CHECKPOINTS: MetricPoint['checkpoint'][] = ['10m', '30m', '60m', '24h', '7d'];
 
@@ -20,11 +14,34 @@ export default function CommandCenterPage() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const savedMode =
-      (window.localStorage.getItem(STORE_KEYS.mode) as ApiMode | null) ?? 'manual';
-    setMode(savedMode);
-    const all = readJson<MetricPoint[]>(STORE_KEYS.metrics, []);
-    setMetrics(all.filter((m) => m.postId === params.postId));
+    async function loadMetrics() {
+      const response = await fetch(`/api/metrics?postId=${params.postId}`);
+      if (!response.ok) return;
+      const body = (await response.json()) as {
+        items?: Array<{
+          post_id: string;
+          captured_at: string;
+          source: MetricPoint['source'];
+          impressions: number;
+          likes: number;
+          replies: number;
+          reposts: number;
+          bookmarks: number;
+        }>;
+      };
+      setMetrics((body.items ?? []).map((item) => ({
+        postId: item.post_id,
+        checkpoint: '10m',
+        capturedAt: item.captured_at,
+        source: item.source,
+        impressions: item.impressions,
+        likes: item.likes,
+        replies: item.replies,
+        reposts: item.reposts,
+        bookmarks: item.bookmarks,
+      })));
+    }
+    void loadMetrics();
   }, [params.postId]);
 
   async function fetchCheckpoint() {
@@ -59,8 +76,6 @@ export default function CommandCenterPage() {
         bookmarks: Number(body.result.metrics.bookmarks ?? 0),
       };
       setMetrics((prev) => [item, ...prev]);
-      const all = readJson<MetricPoint[]>(STORE_KEYS.metrics, []);
-      writeJson(STORE_KEYS.metrics, [item, ...all]);
     } catch (err) {
       setError(err instanceof Error ? err.message : String(err));
     }

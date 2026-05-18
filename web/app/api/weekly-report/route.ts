@@ -2,14 +2,28 @@ import { NextResponse } from 'next/server';
 import { AppError } from '@/lib/observability/logger';
 import { getRequestUser } from '@/lib/server/auth';
 import { assertEntitled } from '@/lib/server/entitlements';
+import { createClient } from '@/lib/supabase/server';
 
 export async function POST(req: Request) {
   try {
     const user = await getRequestUser(req);
     assertEntitled(user.plan, 'weekly_report');
-    let payload: { posts?: { score?: number; impressions?: number; topic?: string }[] };
-    payload = (await req.json()) as { posts?: { score?: number; impressions?: number; topic?: string }[] };
-    const posts = payload.posts ?? [];
+    const supabase = await createClient();
+    const { data, error } = await supabase
+      .from('post_metrics')
+      .select('impressions, published_posts!inner(user_id, score_id, scores(total_score, drafts(topic)))')
+      .eq('user_id', user.id);
+    if (error) throw error;
+    const posts = (data ?? []).map((row) => {
+      const publishedPost = Array.isArray(row.published_posts) ? row.published_posts[0] : row.published_posts;
+      const score = Array.isArray(publishedPost?.scores) ? publishedPost.scores[0] : publishedPost?.scores;
+      const draft = Array.isArray(score?.drafts) ? score.drafts[0] : score?.drafts;
+      return {
+        score: Number(score?.total_score ?? 0),
+        impressions: row.impressions ?? 0,
+        topic: draft?.topic ?? 'general',
+      };
+    });
     if (!posts.length) return NextResponse.json({ report: null });
 
     const sortedByImp = [...posts].sort((a, b) => (b.impressions ?? 0) - (a.impressions ?? 0));

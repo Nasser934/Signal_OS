@@ -1,8 +1,6 @@
 'use client';
 
 import { useState } from 'react';
-import { STORE_KEYS, readJson, type MetricPoint } from '@/lib/store/localStore';
-import type { StoredDraftRun } from '@/types/scoring';
 
 type Report = {
   generatedAt: string;
@@ -19,19 +17,10 @@ export default function WeeklyReportPage() {
 
   async function generate() {
     setError(null);
-    const runs = readJson<StoredDraftRun[]>(STORE_KEYS.draftRuns, []);
-    const metrics = readJson<MetricPoint[]>(STORE_KEYS.metrics, []);
-    const posts = metrics.map((m) => ({
-      score: runs[0]?.score.totalScore ?? 0,
-      impressions: m.impressions,
-      topic: runs[0]?.topic ?? 'general',
-    }));
-
     try {
       const res = await fetch('/api/weekly-report', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ posts }),
       });
       if (!res.ok) {
         const contentType = res.headers.get('content-type');

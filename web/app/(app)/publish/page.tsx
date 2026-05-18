@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { useState } from 'react';
-import { STORE_KEYS, readJson, writeJson, type PublishedPost } from '@/lib/store/localStore';
+import type { PublishedPost } from '@/lib/store/localStore';
 
 export default function PublishPage() {
   const [draftText, setDraftText] = useState('');
@@ -17,17 +17,14 @@ export default function PublishPage() {
       setMsg('Post URL must be a valid URL');
       return;
     }
-    const mode = (window.localStorage.getItem(STORE_KEYS.mode) as PublishedPost['sourceMode'] | null) ?? 'manual';
     try {
-      const res = await fetch('/api/publish', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ draftText, postUrl, sourceMode: mode }) });
+      const res = await fetch('/api/publish', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ draftText, postUrl, sourceMode: 'manual' }) });
       const body = (await res.json()) as { post?: PublishedPost; error?: string };
       if (!res.ok || !body.post) {
         setMsg(body.error ?? 'publish failed');
         return;
       }
       setPost(body.post);
-      const list = readJson<PublishedPost[]>(STORE_KEYS.posts, []);
-      writeJson(STORE_KEYS.posts, [body.post, ...list].slice(0, 25));
       setMsg('Post marked as published.');
     } catch (error) {
       setMsg(`Network error: ${error instanceof Error ? error.message : 'Failed to publish'}`);

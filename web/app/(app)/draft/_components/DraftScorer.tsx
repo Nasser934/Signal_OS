@@ -3,11 +3,7 @@
 import Link from 'next/link';
 import { useEffect, useMemo, useState } from 'react';
 import type { ScoreOutput } from '@/lib/scoringClient';
-import { STORE_KEYS, readJson, writeJson } from '@/lib/store/localStore';
 import type { StoredDraftRun } from '@/types/scoring';
-
-const STORAGE_KEY = 'signalos:draft';
-const RUNS_KEY = STORE_KEYS.draftRuns;
 
 export function DraftScorer() {
   const [text, setText] = useState('');
@@ -21,24 +17,14 @@ export function DraftScorer() {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    const raw = window.localStorage.getItem(STORAGE_KEY);
-    if (raw) {
-      try {
-        const saved = JSON.parse(raw) as { text?: string; topic?: string; audience?: string; tone?: string };
-        setText(saved.text ?? '');
-        setTopic(saved.topic ?? '');
-        setAudience(saved.audience ?? '');
-        setTone(saved.tone ?? '');
-      } catch {
-        window.localStorage.removeItem(STORAGE_KEY);
-      }
+    async function loadHistory() {
+      const response = await fetch('/api/draft/score');
+      if (!response.ok) return;
+      const body = (await response.json()) as { items?: StoredDraftRun[] };
+      setHistory(body.items ?? []);
     }
-    setHistory(readJson<StoredDraftRun[]>(RUNS_KEY, []).slice(0, 10));
+    void loadHistory();
   }, []);
-
-  useEffect(() => {
-    writeJson(STORAGE_KEY, { text, topic, audience, tone });
-  }, [text, topic, audience, tone]);
 
   const canScore = useMemo(() => text.trim().length > 0 && !loading, [text, loading]);
 
@@ -70,7 +56,6 @@ export function DraftScorer() {
       };
       const nextHistory = [entry, ...history].slice(0, 10);
       setHistory(nextHistory);
-      writeJson(RUNS_KEY, nextHistory);
     } catch (err) {
       setError(err instanceof Error ? err.message : String(err));
     } finally {

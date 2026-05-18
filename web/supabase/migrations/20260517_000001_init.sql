@@ -128,7 +128,7 @@ create table if not exists public.api_credentials (
   encrypted_secret bytea,
   key_fingerprint text not null,
   last_validated_at timestamptz,
-  validation_status text not null default 'pending',
+  validation_status text not null default 'pending' check (validation_status in ('pending','valid','invalid')),
   is_active boolean not null default true,
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now(),
@@ -142,7 +142,7 @@ create table if not exists public.approval_actions (
   id uuid primary key default gen_random_uuid(),
   user_id uuid not null references public.users(id) on delete cascade,
   post_id uuid,
-  action_type text not null, -- reply_suggestion, timing_recommendation, risk_flag
+  action_type text not null check (action_type in ('reply_suggestion','timing_recommendation','risk_flag')),
   payload jsonb not null,
   approval_status text not null default 'pending' check (approval_status in ('pending','approved','rejected')),
   approved_at timestamptz,
@@ -161,6 +161,35 @@ create index if not exists idx_post_metrics_post_captured on public.post_metrics
 create index if not exists idx_post_metrics_user_captured on public.post_metrics(user_id, captured_at desc);
 create index if not exists idx_api_credentials_user_active on public.api_credentials(user_id, is_active);
 create index if not exists idx_approval_actions_user_status on public.approval_actions(user_id, approval_status, created_at desc);
+create index if not exists idx_published_posts_draft_id on public.published_posts(draft_id);
+create index if not exists idx_published_posts_score_id on public.published_posts(score_id);
+create index if not exists idx_approval_actions_post_id on public.approval_actions(post_id);
+
+
+-- ----------
+-- Triggers
+-- ----------
+create or replace function public.set_updated_at()
+returns trigger
+language plpgsql
+as $$
+begin
+  new.updated_at := now();
+  return new;
+end;
+$$;
+
+create trigger trg_users_updated_at
+before update on public.users
+for each row execute function public.set_updated_at();
+
+create trigger trg_drafts_updated_at
+before update on public.drafts
+for each row execute function public.set_updated_at();
+
+create trigger trg_api_credentials_updated_at
+before update on public.api_credentials
+for each row execute function public.set_updated_at();
 
 -- ----------
 -- RLS

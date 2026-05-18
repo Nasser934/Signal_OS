@@ -17,6 +17,11 @@ This document turns the BRD into an implementation tracker, including what is co
 - A starter schema exists in `db/schema.sql`.
 - The repository currently appears documentation-first and does not yet include a complete runnable MVP application stack.
 
+## Immediate Hotfixes Applied (2026-05-17)
+
+- ✅ Corrected Supabase migration SQL for `published_posts` composite foreign keys to use column-targeted `ON DELETE SET NULL` actions (`SET NULL (draft_id)` / `SET NULL (score_id)`), preserving required `user_id` values while clearing optional references.
+- ✅ Added CI schema smoke test workflow (`.github/workflows/schema-smoke-test.yml`) plus `scripts/verify_schema.sh` to apply the migration against a clean Postgres instance and catch SQL regressions early.
+
 ---
 
 ## Functional Requirements Tracker (FR-001 to FR-031)

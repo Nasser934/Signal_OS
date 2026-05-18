@@ -1,10 +1,15 @@
 import { NextResponse } from 'next/server';
 import { ApiFallbackService } from '@/lib/apiFallbackService';
+import { AppError } from '@/lib/observability/logger';
+import { getRequestUser } from '@/lib/server/auth';
+import { assertEntitled } from '@/lib/server/entitlements';
 
 const service = new ApiFallbackService();
 
 export async function POST(req: Request) {
   try {
+    const user = await getRequestUser(req);
+    assertEntitled(user.plan, 'command_center');
     let payload: {
       mode: 'full_api' | 'byo_api_key' | 'manual';
       postId: string;
@@ -34,12 +39,15 @@ export async function POST(req: Request) {
     }
 
     const result = await service.fetchMetrics(
-      { mode: payload.mode ?? 'manual', userId: 'local-user', byoCredentialId: payload.byoCredentialId },
+      { mode: payload.mode ?? 'manual', userId: user.id, byoCredentialId: payload.byoCredentialId },
       { postId: payload.postId }
     );
 
     return NextResponse.json({ result });
   } catch (error) {
+    if (error instanceof AppError) {
+      return NextResponse.json({ error: error.message, code: error.code }, { status: error.status });
+    }
     return NextResponse.json(
       { error: error instanceof Error ? error.message : 'Unexpected metrics error' },
       { status: 500 }

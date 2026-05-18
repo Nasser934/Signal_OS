@@ -74,3 +74,31 @@ The long-term defensibility is not the visible scoring UI—it is the proprietar
 ## Reference Document
 
 For the complete investor-grade requirements, see [`BRD.md`](./BRD.md).
+
+## Local Development
+
+1. Copy `.env.example` to `web/.env.local`.
+2. Start the scoring service:
+   - `python -m uvicorn main:app --host 127.0.0.1 --port 8000` from `services/scoring/`
+3. Start the web app:
+   - `npm install`
+   - `npm run dev` from `web/`
+
+`APP_MODE=demo` keeps the whole app available locally without authentication so the product can be shown end to end.
+
+## Production Readiness
+
+Before public launch, configure:
+
+- Supabase project, auth, and migration deployment
+- `APP_MODE=production`
+- Supabase Auth callback URL: `/auth/callback`
+- Stripe secret key and price IDs
+- X API credentials or a documented BYO/manual fallback workflow
+- Hosting, domain, monitoring, backups, and support/legal pages
+
+In production, paid surfaces are intended to be gated by plan:
+
+- `creator`: command center, reply assistant, weekly report
+- `pro`: advanced tracking
+- `agency`: higher-volume team usage

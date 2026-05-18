@@ -1,9 +1,10 @@
 import { promises as fs } from 'fs';
+import os from 'os';
 import path from 'path';
 import type { StoredDraftRun } from '@/types/scoring';
 
-const STORE_FILE = path.join('/tmp', 'signalos-scorecards.json');
-const LOCK_FILE = path.join('/tmp', 'signalos-scorecards.lock');
+const STORE_FILE = path.join(os.tmpdir(), 'signalos-scorecards.json');
+const LOCK_FILE = path.join(os.tmpdir(), 'signalos-scorecards.lock');
 
 let lockPromise: Promise<void> | null = null;
 

@@ -19,16 +19,21 @@ export function middleware(req: NextRequest) {
     return NextResponse.next();
   }
 
+  if (process.env.APP_MODE !== 'production') {
+    return NextResponse.next();
+  }
+
   const sessionToken =
     req.cookies.get('signalos_session')?.value ??
-    req.headers.get('x-signalos-session');
+    req.headers.get('x-signalos-session') ??
+    req.cookies.getAll().find((cookie) => cookie.name.startsWith('sb-'))?.value;
 
   if (!sessionToken) {
     if (req.nextUrl.pathname.startsWith('/api')) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    return NextResponse.redirect(new URL('/', req.url));
+    return NextResponse.redirect(new URL('/login', req.url));
   }
 
   return NextResponse.next();

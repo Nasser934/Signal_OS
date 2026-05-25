@@ -28,6 +28,15 @@ export async function getRequestUser(req: Request): Promise<AppUser> {
     throw new AppError('Authentication required', 'UNAUTHORIZED', 401);
   }
 
-  const plan = (user.user_metadata?.plan as Plan | undefined) ?? 'free';
+  const { data: profile } = await supabase
+    .from('users')
+    .select('plan')
+    .eq('id', user.id)
+    .maybeSingle();
+  const plan = isPlan(profile?.plan) ? profile.plan : 'free';
   return { id: user.id, plan };
+}
+
+function isPlan(value: unknown): value is Plan {
+  return value === 'free' || value === 'creator' || value === 'pro' || value === 'agency';
 }

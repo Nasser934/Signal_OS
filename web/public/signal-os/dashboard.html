@@ -1,0 +1,55 @@
+﻿<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" /><title>Dashboard - Signal OS</title><link rel="icon" href="favicon.svg" /><link rel="stylesheet" href="css/signal-os.css" /></head>
+<body>
+  <div class="app-shell" data-app-shell>
+    <section class="kpi-grid">
+      <div class="kpi panel"><label>Composite signal score</label><strong>87.4</strong><div class="delta">+12.8 vs previous cycle</div></div>
+      <div class="kpi panel"><label>Tracked posts</label><strong>18,420</strong><div class="delta">4 sources connected</div></div>
+      <div class="kpi panel"><label>Creator momentum</label><strong>+21%</strong><div class="delta">short-form AI workflow cohort</div></div>
+      <div class="kpi panel"><label>Forecast direction</label><strong>Up</strong><div class="delta">peak window in 9 days</div></div>
+    </section>
+    <section class="dash-grid">
+      <div class="chart panel"><div class="chart-head"><h3>Trend timeline</h3><span class="status good">accelerating</span></div><div data-sparkline style="height:220px"></div></div>
+      <div class="panel panel-pad"><div class="chart-head"><h3>Signal score leaderboard</h3><span class="mono subtle">top 4</span></div><div class="leaderboard">
+        <div class="rank-row"><span class="mono">01</span><div><strong>AI workflow teardown</strong><div class="muted">Hook: before/after build</div></div><span class="score">94</span></div>
+        <div class="rank-row"><span class="mono">02</span><div><strong>Founder-led automation</strong><div class="muted">Hook: cost saved</div></div><span class="score">89</span></div>
+        <div class="rank-row"><span class="mono">03</span><div><strong>Creator tooling stack</strong><div class="muted">Hook: tool list</div></div><span class="score">84</span></div>
+        <div class="rank-row"><span class="mono">04</span><div><strong>Newsjacking model launch</strong><div class="muted">Hook: fast reaction</div></div><span class="score">78</span></div>
+      </div></div>
+    </section>
+    <section class="dash-grid">
+      <div class="chart panel"><div class="chart-head"><h3>Topic performance</h3><span class="muted">views by cluster</span></div><div class="chart-bars"><div class="bar" style="height:72%"><span>AI ops</span></div><div class="bar" style="height:58%"><span>UGC</span></div><div class="bar warn" style="height:46%"><span>Risk</span></div><div class="bar" style="height:81%"><span>Agents</span></div><div class="bar" style="height:63%"><span>Reports</span></div></div></div>
+      <div class="panel panel-pad"><div class="chart-head"><h3>AI recommendations</h3><button class="btn" data-run-analysis>Run analysis</button></div><div data-analysis-state><span class="status good">Recommended action</span><p class="muted">Act on AI workflow teardown content with creator briefs, not paid media. Momentum is creator-led and correlated with product release coverage.</p></div></div>
+    </section>
+    <section class="panel panel-pad">
+      <div class="chart-head"><h3>Signal processing workflow</h3><span class="status info">Supabase-ready</span></div>
+      <div class="pipeline">
+        <div class="pipeline-step"><b>01</b><div><strong>Import social data</strong><div class="muted">Posts, creators, hashtags, views, replies, reposts, and timestamps land in a workspace schema.</div></div><span class="status good">live</span></div>
+        <div class="pipeline-step"><b>02</b><div><strong>Clean and classify</strong><div class="muted">Topic, format, hook type, language, sentiment, AI-content flag, and news correlation are normalized.</div></div><span class="status info">running</span></div>
+        <div class="pipeline-step"><b>03</b><div><strong>Decide action</strong><div class="muted">Signal OS returns act, monitor, or ignore with rationale and exportable evidence.</div></div><span class="status good">ready</span></div>
+      </div>
+    </section>
+    <section class="dash-grid">
+      <div class="panel"><div class="table-head panel-pad"><h3>Creator growth table</h3><span class="status info">TanStack-ready</span></div><div class="table-wrap"><table><thead><tr><th>Creator</th><th>Topic</th><th>Views</th><th>Signal</th><th>Action</th></tr></thead><tbody>
+        <tr><td>@maya.builds</td><td>AI workflow</td><td class="num">1.8M</td><td class="num">94</td><td>Invite to partner brief</td></tr>
+        <tr><td>@growthops</td><td>Creator tooling</td><td class="num">840k</td><td class="num">86</td><td>Monitor velocity</td></tr>
+        <tr><td>@founderfield</td><td>Automation ROI</td><td class="num">612k</td><td class="num">82</td><td>Act with case study</td></tr>
+      </tbody></table></div></div>
+      <div class="panel"><div class="table-head panel-pad"><h3>Hashtag performance</h3><span class="status warn">saturation rising</span></div><div class="table-wrap"><table style="min-width:520px"><thead><tr><th>Hashtag</th><th>Posts</th><th>Forecast</th></tr></thead><tbody>
+        <tr><td>#aiworkflow</td><td class="num">4,280</td><td>Up</td></tr>
+        <tr><td>#foundertools</td><td class="num">2,910</td><td>Flat</td></tr>
+        <tr><td>#agentstack</td><td class="num">1,744</td><td>Up</td></tr>
+      </tbody></table></div></div>
+    </section>
+    <section class="grid-3">
+      <div class="state panel"><span class="status warn">Opportunity</span><h3>News correlation</h3><p>Model launch coverage is lifting creator repost rates in the first 36 hours.</p></div>
+      <div class="state panel"><span class="status bad">Risk</span><h3>AI content flag</h3><p>Generic tutorial posts are rising, lowering signal quality in broad AI hashtags.</p></div>
+      <div class="state panel"><span class="status good">Decision</span><h3>Act</h3><p>Prioritize partner briefs around before/after workflow stories this week.</p></div>
+    </section>
+  </div>
+  <script src="js/signal-os.js"></script><script>mountShell("dashboard.html","Main dashboard","Live signal overview across trends, creators, hashtags, topics, sentiment, and forecast direction.");document.querySelectorAll("[data-sparkline]").forEach(el=>el.innerHTML=sparkline());</script>
+</body>
+</html>
+
+

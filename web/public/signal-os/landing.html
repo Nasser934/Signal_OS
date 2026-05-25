@@ -1,0 +1,77 @@
+﻿<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Signal OS - Social trend intelligence</title>
+  <link rel="icon" href="favicon.svg" />
+  <link rel="stylesheet" href="css/signal-os.css" />
+</head>
+<body>
+  <nav class="topnav">
+    <div class="topnav-inner">
+      <a class="brand" href="index.html"><span class="mark">S</span><span>Signal OS</span></a>
+      <div class="navlinks"><a href="#workflow">Workflow</a><a href="#intelligence">Intelligence</a><a href="#states">States</a><a href="dashboard.html">Dashboard</a></div>
+      <div class="nav-actions"><a class="btn btn-ghost" href="login.html">Log in</a><a class="btn btn-primary" href="signup.html">Start workspace</a></div>
+    </div>
+  </nav>
+  <main>
+    <section class="hero">
+      <div>
+        <h1>Turn social signals into decisions.</h1>
+        <p>Signal OS helps analyst teams connect social posts, creators, hashtags, topics, sentiment, news correlation, and forecast direction inside one serious trend intelligence cockpit.</p>
+        <div class="hero-actions"><a class="btn btn-primary" href="dashboard.html">Explore product</a><a class="btn" href="reports.html">View reports</a></div>
+        <div class="hero-proof">
+          <div class="proof panel"><strong class="mono">18.4k</strong><span>posts classified this cycle</span></div>
+          <div class="proof panel"><strong class="mono">83</strong><span>active topic clusters</span></div>
+          <div class="proof panel"><strong class="mono">42</strong><span>creator cohorts monitored</span></div>
+        </div>
+      </div>
+      <div class="product-frame" aria-label="Signal OS product preview">
+        <div class="frame-bar"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="mono">signal-os.app/dashboard</span></div>
+        <div class="mini-dashboard">
+          <div class="mini-side"><div></div><div></div><div></div><div></div><div></div><div></div></div>
+          <div class="mini-main">
+            <div class="mini-kpis">
+              <div class="mini-kpi panel"><span class="muted">Signal score</span><strong class="mono" style="display:block;font-size:26px">87.4</strong></div>
+              <div class="mini-kpi panel"><span class="muted">Momentum</span><strong class="mono" style="display:block;font-size:26px">+21%</strong></div>
+              <div class="mini-kpi panel"><span class="muted">Risk</span><strong class="mono" style="display:block;font-size:26px">Low</strong></div>
+              <div class="mini-kpi panel"><span class="muted">Action</span><strong style="display:block;font-size:20px">Act</strong></div>
+            </div>
+            <div class="mini-chart panel"></div>
+            <div class="mini-grid"><div class="panel panel-pad"><span class="status good">AI recommendation</span><p class="muted">Launch creator outreach against short-form AI workflow content before the topic peak.</p></div><div class="panel panel-pad"><span class="status warn">News correlation</span><p class="muted">Model release coverage is amplifying repost velocity.</p></div></div>
+          </div>
+        </div>
+      </div>
+    </section>
+    <section class="section" id="workflow">
+      <div class="section-head"><h2>Built around the analyst workflow.</h2><p>Connect data, clean it, classify the signal, compare movement with news, generate insight, then act, monitor, or ignore.</p></div>
+      <div class="grid-3">
+        <article class="feature panel"><h3>Import and classify</h3><p>Bring in social posts, creators, hook types, languages, formats, hashtags, and timestamps with Supabase-ready data boundaries.</p></article>
+        <article class="feature panel"><h3>Analyze movement</h3><p>Track topic lift, creator velocity, sentiment shifts, AI-content flags, and market momentum without flattening everything into one score.</p></article>
+        <article class="feature panel"><h3>Decide next action</h3><p>AI recommendations separate act, monitor, and ignore decisions with risk and opportunity alerts.</p></article>
+      </div>
+    </section>
+    <section class="section" id="intelligence">
+      <div class="section-head"><h2>Dashboard-first, not landing-page-only.</h2><p>The first version includes product screens for trends, creators, hashtags, topics, sentiment, forecasting, reports, and settings.</p></div>
+      <div class="table-wrap"><table><thead><tr><th>Module</th><th>Primary question</th><th>Decision output</th></tr></thead><tbody>
+        <tr><td>Trend Timeline</td><td>What is accelerating, and what news moved it?</td><td><span class="status good">Act</span></td></tr>
+        <tr><td>Creator Intelligence</td><td>Which creators are gaining signal quality?</td><td><span class="status info">Partner</span></td></tr>
+        <tr><td>Forecasting</td><td>Where is the next momentum window?</td><td><span class="status warn">Monitor</span></td></tr>
+      </tbody></table></div>
+    </section>
+    <section class="section" id="states">
+      <div class="section-head"><h2>Product states are included.</h2><p>Loading, empty, and error states are present as real product modules, not as generic placeholders.</p></div>
+      <div class="state-grid">
+        <div class="state panel"><span class="status info">Loading</span><h3>Classifying signals</h3><p>Shows import progress while the classifier maps topics, sentiment, language, and AI content flags.</p></div>
+        <div class="state panel"><span class="status warn">Empty</span><h3>No exports yet</h3><p>Guides the user to generate a board-ready report from the current workspace.</p></div>
+        <div class="state panel"><span class="status bad">Error</span><h3>Source sync failed</h3><p>Explains which data connector needs attention without hiding the rest of the dashboard.</p></div>
+      </div>
+    </section>
+  </main>
+  <script src="js/signal-os.js"></script>
+  <script>document.querySelectorAll(".mini-chart").forEach(el => el.innerHTML = sparkline());</script>
+</body>
+</html>
+
+

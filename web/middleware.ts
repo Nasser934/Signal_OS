@@ -5,6 +5,15 @@ import { updateSession } from '@/lib/supabase/middleware';
 function isProtectedPath(pathname: string): boolean {
   return (
     pathname.startsWith('/api') ||
+    pathname.startsWith('/dashboard') ||
+    pathname.startsWith('/timeline') ||
+    pathname.startsWith('/creators') ||
+    pathname.startsWith('/hashtags') ||
+    pathname.startsWith('/topics') ||
+    pathname.startsWith('/sentiment') ||
+    pathname.startsWith('/forecast') ||
+    pathname.startsWith('/insights') ||
+    pathname.startsWith('/reports') ||
     pathname.startsWith('/draft') ||
     pathname.startsWith('/account-import') ||
     pathname.startsWith('/publish') ||
@@ -44,5 +53,5 @@ export function middleware(req: NextRequest) {
 }
 
 export const config = {
-  matcher: ['/((?!_next/static|_next/image|favicon.ico).*)'],
+  matcher: ['/((?!_next/static|_next/image|favicon.ico|signal-os).*)'],
 };

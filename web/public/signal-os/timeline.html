@@ -1,0 +1,18 @@
+﻿<!doctype html><html lang="en"><head><meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" /><title>Trend Timeline - Signal OS</title><link rel="icon" href="favicon.svg" /><link rel="stylesheet" href="css/signal-os.css" /></head><body>
+<div class="app-shell" data-app-shell>
+  <section class="dash-grid">
+    <div class="chart panel"><div class="chart-head"><h3>Momentum curve with news events</h3><span class="status info">news linked</span></div><div data-sparkline style="height:220px"></div></div>
+    <div class="panel panel-pad"><h3>Timeline controls</h3><div class="form"><label>Topic filter<input value="AI workflow teardown"></label><label>Format<select><option>Short video</option><option>Thread</option><option>Carousel</option></select></label><button class="btn btn-primary">Apply filters</button></div></div>
+  </section>
+  <section class="signal-map panel">
+    <div><div class="chart-head"><h3>Event correlation map</h3><span class="status good">matched</span></div><div class="signal-node"><strong>Model release recap</strong><p>Coverage spike at 09:00 preceded a 1.8x repost lift in creator workflow posts.</p></div></div>
+    <div class="pipeline"><div class="pipeline-step"><b>09:20</b><div><strong>@maya.builds</strong><div class="muted">Before/after workflow post crosses 94 signal score.</div></div><span class="status good">Act</span></div><div class="pipeline-step"><b>18:42</b><div><strong>@opsfounder</strong><div class="muted">Auditability framing starts a durable reply thread.</div></div><span class="status warn">Monitor</span></div></div>
+  </section>
+  <section class="panel"><div class="table-head panel-pad"><h3>Signals by time</h3><span class="status good">cleaned</span></div><div class="table-wrap"><table><thead><tr><th>Date/time</th><th>Post text</th><th>Creator</th><th>News correlation</th><th>Signal</th><th>Recommended action</th></tr></thead><tbody>
+    <tr><td class="num">May 24 09:20</td><td>&quot;I rebuilt our reporting workflow with agents and cut review time.&quot;</td><td>@maya.builds</td><td>Model release recap</td><td class="num">94</td><td>Act</td></tr>
+    <tr><td class="num">May 23 18:42</td><td>&quot;The best AI stack is the one your ops team can audit.&quot;</td><td>@opsfounder</td><td>Enterprise AI policy</td><td class="num">81</td><td>Monitor</td></tr>
+    <tr><td class="num">May 22 12:14</td><td>&quot;Everyone is shipping agents. Few are tracking failure modes.&quot;</td><td>@productintel</td><td>Safety report coverage</td><td class="num">76</td><td>Monitor</td></tr>
+  </tbody></table></div></section>
+</div><script src="js/signal-os.js"></script><script>mountShell("timeline.html","Trend Timeline","Compare trend movement with timestamped posts and news events.");document.querySelectorAll("[data-sparkline]").forEach(el=>el.innerHTML=sparkline());</script></body></html>
+
+
